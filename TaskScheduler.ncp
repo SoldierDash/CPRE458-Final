@@ -7,22 +7,23 @@
       <Entity type="Class">
         <Name>TaskManager</Name>
         <Access>Public</Access>
-        <Location left="358" top="117" />
-        <Size width="225" height="196" />
+        <Location left="1087" top="192" />
+        <Size width="335" height="230" />
         <Collapsed>False</Collapsed>
-        <Member type="Field">int time</Member>
-        <Member type="Field">Tasks[] finished</Member>
+        <Member type="Field">Task[] finished</Member>
         <Member type="Field">TaskServer[] task_servers</Member>
         <Member type="Field">TaskScheduler waiting_tasks</Member>
+        <Member type="Field">AperiodicServer aperiodic_task_handler</Member>
         <Member type="Method">public void run()</Member>
         <Member type="Method">public void addServer(TaskServer server)</Member>
-        <Member type="Constructor">public TaskManager(TaskScheduler scheduler)</Member>
+        <Member type="Constructor">public TaskManager(TaskScheduler scheduler, AperiodicServer task)</Member>
+        <Member type="Method">public void addTask(Task task)</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
         <Name>TaskScheduler</Name>
         <Access>Public</Access>
-        <Location left="667" top="117" />
+        <Location left="1515" top="192" />
         <Size width="180" height="145" />
         <Collapsed>False</Collapsed>
         <Member type="Field">PriorityQueue&lt;Task&gt; waiting</Member>
@@ -32,7 +33,7 @@
       <Entity type="Class">
         <Name>TaskServer</Name>
         <Access>Public</Access>
-        <Location left="434" top="424" />
+        <Location left="1282" top="499" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Member type="Field">int period</Member>
@@ -44,25 +45,26 @@
       <Entity type="Class">
         <Name>AperiodicServer</Name>
         <Access>Public</Access>
-        <Location left="434" top="721" />
+        <Location left="1282" top="785" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
-        <Modifier>None</Modifier>
+        <Modifier>Abstract</Modifier>
       </Entity>
       <Entity type="Class">
         <Name>Task</Name>
         <Access>Public</Access>
-        <Location left="667" top="424" />
-        <Size width="162" height="216" />
+        <Location left="1515" top="499" />
+        <Size width="163" height="128" />
         <Collapsed>False</Collapsed>
-        <Member type="Field">int time_left</Member>
+        <Member type="Field">int computation_remaining</Member>
         <Member type="Field">int absolute_deadline</Member>
+        <Member type="Method">public void run()</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
         <Name>EDF</Name>
         <Access>Public</Access>
-        <Location left="1113" top="199" />
+        <Location left="1961" top="274" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Modifier>None</Modifier>
@@ -70,14 +72,41 @@
       <Entity type="Class">
         <Name>RMS</Name>
         <Access>Public</Access>
-        <Location left="915" top="199" />
+        <Location left="1763" top="274" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>PollingServer</Name>
+        <Access>Public</Access>
+        <Location left="1282" top="1071" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>PriorityInheritanceServer</Name>
+        <Access>Public</Access>
+        <Location left="1475" top="1071" />
+        <Size width="172" height="77" />
+        <Collapsed>False</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Processor</Name>
+        <Access>Public</Access>
+        <Location left="813" top="192" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">int time</Member>
         <Modifier>None</Modifier>
       </Entity>
     </Entities>
     <Relationships>
       <Relationship type="Association" first="0" second="2">
+        <Label>
+        </Label>
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <Direction>Unidirectional</Direction>
@@ -85,6 +114,8 @@
         <EndMultiplicity>1..*</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="0" second="1">
+        <Label>
+        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
@@ -92,6 +123,8 @@
         <EndMultiplicity>1</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="1" second="4">
+        <Label>
+        </Label>
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <Direction>Unidirectional</Direction>
@@ -100,15 +133,15 @@
       </Relationship>
       <Relationship type="Association" first="2" second="1">
         <Label>push new task</Label>
-        <StartOrientation>Vertical</StartOrientation>
-        <EndOrientation>Vertical</EndOrientation>
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
         <BendPoint relativeToStartShape="True">
-          <X>576</X>
-          <Y>391</Y>
+          <X>1469</X>
+          <Y>569</Y>
         </BendPoint>
         <BendPoint relativeToStartShape="False">
-          <X>703</X>
-          <Y>387</Y>
+          <X>1469</X>
+          <Y>308</Y>
         </BendPoint>
         <Direction>Unidirectional</Direction>
         <AssociationType>Association</AssociationType>
@@ -121,20 +154,20 @@
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <BendPoint relativeToStartShape="True">
-          <X>1213</X>
-          <Y>162</Y>
+          <X>2061</X>
+          <Y>237</Y>
         </BendPoint>
       </Relationship>
       <Relationship type="Generalization" first="6" second="1">
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <BendPoint relativeToStartShape="True">
-          <X>995</X>
-          <Y>174</Y>
+          <X>1843</X>
+          <Y>249</Y>
         </BendPoint>
         <BendPoint relativeToStartShape="False">
-          <X>898</X>
-          <Y>161</Y>
+          <X>1746</X>
+          <Y>236</Y>
         </BendPoint>
       </Relationship>
       <Relationship type="Association" first="2" second="4">
@@ -143,6 +176,14 @@
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
         <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Generalization" first="7" second="3">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+      </Relationship>
+      <Relationship type="Generalization" first="8" second="3">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
       </Relationship>
     </Relationships>
   </ProjectItem>
