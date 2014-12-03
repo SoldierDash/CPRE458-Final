@@ -131,6 +131,7 @@ public class Simulator extends JFrame implements ActionListener {
 	
 	private JSpinner serverComputationTimeSpinner;
 	private JSpinner serverPeriodSpinner;
+	private JSpinner timeUnitsToRunSpinner;
 	private JButton addPeriodicTaskButton;
 	private JButton removePeriodicTaskButton;
 	private JButton addAperiodicTaskButton;
@@ -140,7 +141,6 @@ public class Simulator extends JFrame implements ActionListener {
 	private JPanel schedulePanel;
 	private JScrollPane scheduleScrollPane;
 	
-	private Scheduler scheduler;
 	private DefaultListModel<PeriodicTask> periodicTasks;
 	private JList<PeriodicTask> periodicTasksList;
 	private DefaultListModel<AperiodicTask> aperiodicTasks;
@@ -174,7 +174,7 @@ public class Simulator extends JFrame implements ActionListener {
 		controlPanel.setLayout(null);
 		
 		JPanel serverSettingsPanel = new JPanel();
-		serverSettingsPanel.setBounds(0, 12, 550, 50);
+		serverSettingsPanel.setBounds(0, 0, 550, 50);
 		controlPanel.add(serverSettingsPanel);
 		serverSettingsPanel.setLayout(null);
 		
@@ -198,8 +198,23 @@ public class Simulator extends JFrame implements ActionListener {
 		serverPeriodSpinner.setBounds(460, 15, 50, 20);
 		serverSettingsPanel.add(serverPeriodSpinner);
 		
+		JPanel simulationTimePanel = new JPanel();
+		simulationTimePanel.setBounds(0, 50, 550, 50);
+		controlPanel.add(simulationTimePanel);
+		simulationTimePanel.setLayout(null);
+		
+		JLabel timeUnitsToRunLabel = new JLabel("Time Units To Run:");
+		timeUnitsToRunLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		timeUnitsToRunLabel.setBounds(133, 18, 100, 14);
+		simulationTimePanel.add(timeUnitsToRunLabel);
+		
+		timeUnitsToRunSpinner = new JSpinner();
+		timeUnitsToRunSpinner.setModel(new SpinnerNumberModel(new Integer(1), new Integer(1), null, new Integer(1)));
+		timeUnitsToRunSpinner.setBounds(366, 15, 50, 20);
+		simulationTimePanel.add(timeUnitsToRunSpinner);
+		
 		JPanel taskPanel = new JPanel();
-		taskPanel.setBounds(0, 74, 550, 250);
+		taskPanel.setBounds(0, 100, 550, 250);
 		controlPanel.add(taskPanel);
 		taskPanel.setLayout(null);
 		
@@ -274,7 +289,7 @@ public class Simulator extends JFrame implements ActionListener {
 		aperiodicAddRemoveButtonPanel.add(removeAperiodicTaskButton);
 		
 		JPanel startStopPanel = new JPanel();
-		startStopPanel.setBounds(0, 336, 550, 50);
+		startStopPanel.setBounds(0, 350, 550, 50);
 		controlPanel.add(startStopPanel);
 		startStopPanel.setLayout(null);
 		
@@ -404,26 +419,36 @@ public class Simulator extends JFrame implements ActionListener {
 	 * Currently the code given is just a sample - it does not actually work yet.
 	 */
 	private void drawSchedule() {
-		scheduler = new TestScheduler((int) serverComputationTimeSpinner.getValue(), (int) serverPeriodSpinner.getValue());
+		TestScheduler pollingScheduler = new TestScheduler((int) serverComputationTimeSpinner.getValue(), (int) serverPeriodSpinner.getValue());
+		TestScheduler deferrableScheduler = new TestScheduler((int) serverComputationTimeSpinner.getValue(), (int) serverPeriodSpinner.getValue());
+		TestScheduler sporadicScheduler = new TestScheduler((int) serverComputationTimeSpinner.getValue(), (int) serverPeriodSpinner.getValue());
 		for (int i = 0; i < periodicTasks.getSize(); i++) {
-			scheduler.addPeriodicTask(periodicTasks.get(i).getName(), periodicTasks.get(i).getComputation(), periodicTasks.get(i).getPeriod());
+			pollingScheduler.addPeriodicTask(periodicTasks.get(i).getName(), periodicTasks.get(i).getComputation(), periodicTasks.get(i).getPeriod());
+			deferrableScheduler.addPeriodicTask(periodicTasks.get(i).getName(), periodicTasks.get(i).getComputation(), periodicTasks.get(i).getPeriod());
+			sporadicScheduler.addPeriodicTask(periodicTasks.get(i).getName(), periodicTasks.get(i).getComputation(), periodicTasks.get(i).getPeriod());
 		}
 		
 		for (int i = 0; i < aperiodicTasks.getSize(); i++) {
-			scheduler.addAperiodicTask(aperiodicTasks.get(i).getName(), aperiodicTasks.get(i).getStart(), aperiodicTasks.get(i).getComputation());
+			pollingScheduler.addAperiodicTask(aperiodicTasks.get(i).getName(), aperiodicTasks.get(i).getStart(), aperiodicTasks.get(i).getComputation());
+			deferrableScheduler.addAperiodicTask(aperiodicTasks.get(i).getName(), aperiodicTasks.get(i).getStart(), aperiodicTasks.get(i).getComputation());
+			sporadicScheduler.addAperiodicTask(aperiodicTasks.get(i).getName(), aperiodicTasks.get(i).getStart(), aperiodicTasks.get(i).getComputation());
 		}
 	
-		
-		scheduler.run(10);
-		List<? extends Task> tasks = scheduler.getSchedule();
+		pollingScheduler.run((int) timeUnitsToRunSpinner.getValue());
+		deferrableScheduler.run((int) timeUnitsToRunSpinner.getValue());
+		sporadicScheduler.run((int) timeUnitsToRunSpinner.getValue());
+		List<? extends Task> pollingSchedule = pollingScheduler.getSchedule();
+		List<? extends Task> deferrableSchedule = deferrableScheduler.getSchedule();
+		List<? extends Task> sporadicSchedule = sporadicScheduler.getSchedule();
 		
 		ImagePanel imagePanel = new ImagePanel(550, 300);
 		scheduleScrollPane.setViewportView(imagePanel);
 		
 		taskColors.put(null, Color.WHITE);
-		int boxSize = 30;
+		int boxSize = 50;
 		int x = 0;
-		for (int i = 0; i < tasks.size(); i++) {
+		for (int i = 0; i < pollingSchedule.size(); i++) {
+			/* Resize image if necessary */
 			if (x + boxSize > imagePanel.getImage().getWidth()) {
 				int width = imagePanel.getImage().getWidth();
 				int height = imagePanel.getImage().getHeight();
@@ -435,19 +460,51 @@ public class Simulator extends JFrame implements ActionListener {
 				scheduleScrollPane.repaint();
 			}
 			
-			Color color = taskColors.get(tasks.get(i).getName());
+			Color color = null;
+			Graphics2D g = (Graphics2D) imagePanel.getGraphics();
+			
+			/* Draw polling schedule */
+			color = taskColors.get(pollingSchedule.get(i).getName());
 			if (color == null) {
 				color = COLORS[nextColorIndex++];
-				taskColors.put(tasks.get(i).getName(), color);
+				taskColors.put(pollingSchedule.get(i).getName(), color);
 				if (nextColorIndex == 20) {
 					nextColorIndex = 0;
 				}
 			}
-			Graphics2D g = (Graphics2D) imagePanel.getGraphics();
 			g.setColor(color);
-			g.fillRect(x, 10, boxSize, boxSize);
+			g.fillRect(x, 15, boxSize, boxSize);
 			g.setColor(Color.BLACK);
-			g.drawRect(x, 10, boxSize, boxSize);
+			g.drawRect(x, 15, boxSize, boxSize);
+			
+			/* Draw deferrable schedule */
+			color = taskColors.get(pollingSchedule.get(i).getName());
+			if (color == null) {
+				color = COLORS[nextColorIndex++];
+				taskColors.put(pollingSchedule.get(i).getName(), color);
+				if (nextColorIndex == 20) {
+					nextColorIndex = 0;
+				}
+			}
+			g.setColor(color);
+			g.fillRect(x, 115, boxSize, boxSize);
+			g.setColor(Color.BLACK);
+			g.drawRect(x, 115, boxSize, boxSize);
+			
+			/* Draw sporadic schedule */
+			color = taskColors.get(pollingSchedule.get(i).getName());
+			if (color == null) {
+				color = COLORS[nextColorIndex++];
+				taskColors.put(pollingSchedule.get(i).getName(), color);
+				if (nextColorIndex == 20) {
+					nextColorIndex = 0;
+				}
+			}
+			g.setColor(color);
+			g.fillRect(x, 215, boxSize, boxSize);
+			g.setColor(Color.BLACK);
+			g.drawRect(x, 215, boxSize, boxSize);
+			
 			x += boxSize;
 		}
 
