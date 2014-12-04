@@ -129,6 +129,7 @@ public class Simulator extends JFrame implements ActionListener {
 	    new Color(0xFF232C16), //Dark Olive Green
 	};
 	
+	private ImagePanel imagePanel;
 	private JSpinner serverComputationTimeSpinner;
 	private JSpinner serverPeriodSpinner;
 	private JSpinner timeUnitsToRunSpinner;
@@ -137,6 +138,7 @@ public class Simulator extends JFrame implements ActionListener {
 	private JButton addAperiodicTaskButton;
 	private JButton removeAperiodicTaskButton;
 	private JButton startButton;
+	private JButton saveButton;
 	private JButton resetButton;
 	private JPanel schedulePanel;
 	private JScrollPane scheduleScrollPane;
@@ -205,12 +207,12 @@ public class Simulator extends JFrame implements ActionListener {
 		
 		JLabel timeUnitsToRunLabel = new JLabel("Time Units To Run:");
 		timeUnitsToRunLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		timeUnitsToRunLabel.setBounds(133, 18, 100, 14);
+		timeUnitsToRunLabel.setBounds(116, 18, 150, 14);
 		simulationTimePanel.add(timeUnitsToRunLabel);
 		
 		timeUnitsToRunSpinner = new JSpinner();
 		timeUnitsToRunSpinner.setModel(new SpinnerNumberModel(new Integer(1), new Integer(1), null, new Integer(1)));
-		timeUnitsToRunSpinner.setBounds(366, 15, 50, 20);
+		timeUnitsToRunSpinner.setBounds(382, 15, 50, 20);
 		simulationTimePanel.add(timeUnitsToRunSpinner);
 		
 		JPanel taskPanel = new JPanel();
@@ -294,13 +296,19 @@ public class Simulator extends JFrame implements ActionListener {
 		startStopPanel.setLayout(null);
 		
 		startButton = new JButton("Start");
-		startButton.setBounds(185, 13, 90, 23);
+		startButton.setBounds(142, 13, 90, 23);
 		startButton.addActionListener(this);
 		startStopPanel.add(startButton);
 		
+		saveButton = new JButton("Save");
+		saveButton.setEnabled(false);
+		saveButton.setBounds(230, 13, 90, 23);
+		saveButton.addActionListener(this);
+		startStopPanel.add(saveButton);
+		
 		resetButton = new JButton("Reset");
 		resetButton.setEnabled(false);
-		resetButton.setBounds(275, 13, 90, 23);
+		resetButton.setBounds(318, 13, 90, 23);
 		resetButton.addActionListener(this);
 		startStopPanel.add(resetButton);
 		
@@ -319,6 +327,8 @@ public class Simulator extends JFrame implements ActionListener {
 			removeAperiodicTaskButtonClicked();
 		} else if (arg0.getSource() == startButton) {
 			start();
+		} else if (arg0.getSource() == saveButton) {
+			save();
 		} else if (arg0.getSource() == resetButton) {
 			reset();
 		}
@@ -391,8 +401,13 @@ public class Simulator extends JFrame implements ActionListener {
 		
 	}
 	
+	private void save() {
+		imagePanel.saveImage("test.png");
+	}
+	
 	private void reset() {
 		setButtonsEnabled(true);
+		saveButton.setEnabled(false);
 		resetButton.setEnabled(false);
 		nextColorIndex = 0;
 		taskColors.clear();
@@ -411,6 +426,7 @@ public class Simulator extends JFrame implements ActionListener {
 		addAperiodicTaskButton.setEnabled(enabled);
 		removeAperiodicTaskButton.setEnabled(enabled);
 		startButton.setEnabled(enabled);
+		saveButton.setEnabled(enabled);
 		resetButton.setEnabled(enabled);
 	}
 	
@@ -441,7 +457,7 @@ public class Simulator extends JFrame implements ActionListener {
 		List<? extends Task> deferrableSchedule = deferrableScheduler.getSchedule();
 		List<? extends Task> sporadicSchedule = sporadicScheduler.getSchedule();
 		
-		ImagePanel imagePanel = new ImagePanel(550, 300);
+		imagePanel = new ImagePanel(550, 300);
 		scheduleScrollPane.setViewportView(imagePanel);
 		
 		Color color = null;
@@ -530,7 +546,7 @@ public class Simulator extends JFrame implements ActionListener {
 			x += boxSize;
 		}
 
-		imagePanel.saveImage("test.png");
+		saveButton.setEnabled(true);
 		resetButton.setEnabled(true);
 	}
 	
