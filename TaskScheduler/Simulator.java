@@ -2,17 +2,18 @@ package TaskScheduler;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsEnvironment;
 import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -129,6 +130,8 @@ public class Simulator extends JFrame implements ActionListener {
 	    new Color(0xFF232C16), //Dark Olive Green
 	};
 	
+	final JFileChooser fc;
+	
 	private ImagePanel imagePanel;
 	private JSpinner serverComputationTimeSpinner;
 	private JSpinner serverPeriodSpinner;
@@ -151,6 +154,8 @@ public class Simulator extends JFrame implements ActionListener {
 	private int nextColorIndex;
 	
 	public Simulator() {
+		
+		fc = new JFileChooser();
 		
 		/* This will be replaced with different schedulers based upon the scheduling algorithm selected once they are implemented. */
 		nextColorIndex = 0;
@@ -402,7 +407,16 @@ public class Simulator extends JFrame implements ActionListener {
 	}
 	
 	private void save() {
-		imagePanel.saveImage("test.png");
+	
+		int returnVal = fc.showSaveDialog(this);
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			File outputfile = fc.getSelectedFile();
+			try {
+				ImageIO.write(imagePanel.getImage(), "png", outputfile);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+        }
 	}
 	
 	private void reset() {

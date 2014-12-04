@@ -44,14 +44,4 @@ public class ImagePanel extends JPanel {
 		this.image = image;
 	}
 	
-	public void saveImage(String name) {
-		try {
-		    File outputfile = new File(name);
-		    ImageIO.write(image, "png", outputfile);
-		} catch (IOException e) {
-		    e.printStackTrace();
-		}
-	}
-	
-	
 }
