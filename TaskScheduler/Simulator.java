@@ -451,9 +451,9 @@ public class Simulator extends JFrame implements ActionListener {
 	 * Currently the code given is just a sample - it does not actually work yet.
 	 */
 	private void drawSchedule() {
-		Scheduler pollingScheduler = new TaskManager(TaskManager.SchedulerType.EDF, TaskManager.AperiodicType.POLLING, "AT", (Integer) serverComputationTimeSpinner.getValue(), (Integer) serverPeriodSpinner.getValue());
-		Scheduler deferrableScheduler = new TaskManager(TaskManager.SchedulerType.EDF, TaskManager.AperiodicType.DEFFERABLE, "AT", (Integer) serverComputationTimeSpinner.getValue(), (Integer) serverPeriodSpinner.getValue());
-		Scheduler sporadicScheduler = new TaskManager(TaskManager.SchedulerType.EDF, TaskManager.AperiodicType.SPORADIC, "AT", (Integer) serverComputationTimeSpinner.getValue(), (Integer) serverPeriodSpinner.getValue());
+		Scheduler pollingScheduler = new TaskManager(TaskManager.SchedulerType.RMS, TaskManager.AperiodicType.POLLING, "AT", (Integer) serverComputationTimeSpinner.getValue(), (Integer) serverPeriodSpinner.getValue());
+		Scheduler deferrableScheduler = new TaskManager(TaskManager.SchedulerType.RMS, TaskManager.AperiodicType.DEFFERABLE, "AT", (Integer) serverComputationTimeSpinner.getValue(), (Integer) serverPeriodSpinner.getValue());
+		Scheduler sporadicScheduler = new TaskManager(TaskManager.SchedulerType.RMS, TaskManager.AperiodicType.SPORADIC, "AT", (Integer) serverComputationTimeSpinner.getValue(), (Integer) serverPeriodSpinner.getValue());
 		for (int i = 0; i < periodicTasks.getSize(); i++) {
 			pollingScheduler.addPeriodicTask(periodicTasks.get(i).getName(), periodicTasks.get(i).getPeriod(), periodicTasks.get(i).getComputation());
 			deferrableScheduler.addPeriodicTask(periodicTasks.get(i).getName(), periodicTasks.get(i).getPeriod(), periodicTasks.get(i).getComputation());
