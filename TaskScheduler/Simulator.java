@@ -437,6 +437,7 @@ public class Simulator extends JFrame implements ActionListener {
 	private void setButtonsEnabled(boolean enabled) {
 		serverComputationTimeSpinner.setEnabled(enabled);
 		serverPeriodSpinner.setEnabled(enabled);
+		timeUnitsToRunSpinner.setEnabled(enabled);
 		addPeriodicTaskButton.setEnabled(enabled);
 		removePeriodicTaskButton.setEnabled(enabled);
 		addAperiodicTaskButton.setEnabled(enabled);
