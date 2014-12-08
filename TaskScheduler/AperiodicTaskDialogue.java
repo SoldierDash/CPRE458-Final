@@ -40,7 +40,7 @@ public class AperiodicTaskDialogue extends JDialog implements ActionListener {
 		aperiodicStartTimePanel.add(aperiodicStartTimeLabel);
 		
 		aperiodicStartTimeSpinner = new JSpinner();
-		aperiodicStartTimeSpinner.setModel(new SpinnerNumberModel(new Integer(1), new Integer(1), null, new Integer(1)));
+		aperiodicStartTimeSpinner.setModel(new SpinnerNumberModel(new Integer(0), new Integer(0), null, new Integer(1)));
 		aperiodicStartTimeSpinner.setBounds(182, 5, 50, 20);
 		aperiodicStartTimePanel.add(aperiodicStartTimeSpinner);
 		

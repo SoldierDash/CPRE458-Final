@@ -78,7 +78,7 @@ public class Simulator extends JFrame implements ActionListener {
 		public AperiodicTask(int id, int start, int computationTime) {
 			this.id = id;
 			this.start = start;
-			this.computation = computation;
+			this.computation = computationTime;
 		}
 		
 		public int getID() {
@@ -376,7 +376,6 @@ public class Simulator extends JFrame implements ActionListener {
 			aperiodicTasks.addElement(new AperiodicTask(aperiodicTasks.size() + 1, start, computation));
 		}
 		
-		atd = null;
 	}
 	
 	private void removeAperiodicTaskButtonClicked() {
