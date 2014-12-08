@@ -61,7 +61,11 @@ public class Task implements TaskScheduler.Task {
 
     @Override
     public String getName() {
-        return parent.getName() + " " + id;
+        return parent.getName();
+    }
+    
+    public String getNameID() {
+    	return parent.getName() + " " + id;
     }
 
     public static class EDF implements Comparator<Task> {

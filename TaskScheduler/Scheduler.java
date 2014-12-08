@@ -14,7 +14,7 @@ public abstract class Scheduler {
 	/*
 	 * Add an aperiodic task to the simulation.
 	 */
-	public abstract void addAperiodicTask(String name, int computation);
+	public abstract void addAperiodicTask(String name, int startTime, int computation);
 	
 	/*
 	 * Run the simulation with the tasks passed into the addPeriodicTask() and addAperiodicTask() methods.
