@@ -81,8 +81,8 @@ public class PeriodicTaskDialogue extends JDialog implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == periodicAddTaskButton) {
-			this.computationTime = (int) periodicComputationTimeSpinner.getValue();
-			this.period = (int) periodicPeriodSpinner.getValue();
+			this.computationTime = (Integer) periodicComputationTimeSpinner.getValue();
+			this.period = (Integer) periodicPeriodSpinner.getValue();
 			this.setVisible(false);
 		}
 	}

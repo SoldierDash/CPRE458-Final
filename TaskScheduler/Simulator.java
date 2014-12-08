@@ -1,5 +1,7 @@
 package TaskScheduler;
 
+import Server.TaskManager;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.ScrollPane;
@@ -449,9 +451,9 @@ public class Simulator extends JFrame implements ActionListener {
 	 * Currently the code given is just a sample - it does not actually work yet.
 	 */
 	private void drawSchedule() {
-		TestScheduler pollingScheduler = new TestScheduler((int) serverComputationTimeSpinner.getValue(), (int) serverPeriodSpinner.getValue());
-		TestScheduler deferrableScheduler = new TestScheduler((int) serverComputationTimeSpinner.getValue(), (int) serverPeriodSpinner.getValue());
-		TestScheduler sporadicScheduler = new TestScheduler((int) serverComputationTimeSpinner.getValue(), (int) serverPeriodSpinner.getValue());
+		Scheduler pollingScheduler = new TaskManager(TaskManager.SchedulerType.EDF, TaskManager.AperiodicType.POLLING, "Aperiodic", (Integer) serverComputationTimeSpinner.getValue(), (Integer) serverPeriodSpinner.getValue());
+		Scheduler deferrableScheduler = new TaskManager(TaskManager.SchedulerType.EDF, TaskManager.AperiodicType.DEFFERABLE, "Aperiodic", (Integer) serverComputationTimeSpinner.getValue(), (Integer) serverPeriodSpinner.getValue());
+		Scheduler sporadicScheduler = new TaskManager(TaskManager.SchedulerType.EDF, TaskManager.AperiodicType.SPORADIC, "Aperiodic", (Integer) serverComputationTimeSpinner.getValue(), (Integer) serverPeriodSpinner.getValue());
 		for (int i = 0; i < periodicTasks.getSize(); i++) {
 			pollingScheduler.addPeriodicTask(periodicTasks.get(i).getName(), periodicTasks.get(i).getComputation(), periodicTasks.get(i).getPeriod());
 			deferrableScheduler.addPeriodicTask(periodicTasks.get(i).getName(), periodicTasks.get(i).getComputation(), periodicTasks.get(i).getPeriod());
@@ -459,14 +461,14 @@ public class Simulator extends JFrame implements ActionListener {
 		}
 		
 		for (int i = 0; i < aperiodicTasks.getSize(); i++) {
-			pollingScheduler.addAperiodicTask(aperiodicTasks.get(i).getName(), aperiodicTasks.get(i).getStart(), aperiodicTasks.get(i).getComputation());
-			deferrableScheduler.addAperiodicTask(aperiodicTasks.get(i).getName(), aperiodicTasks.get(i).getStart(), aperiodicTasks.get(i).getComputation());
-			sporadicScheduler.addAperiodicTask(aperiodicTasks.get(i).getName(), aperiodicTasks.get(i).getStart(), aperiodicTasks.get(i).getComputation());
+			pollingScheduler.addAperiodicTask(aperiodicTasks.get(i).getName(), aperiodicTasks.get(i).getStart());
+			deferrableScheduler.addAperiodicTask(aperiodicTasks.get(i).getName(), aperiodicTasks.get(i).getStart());
+			sporadicScheduler.addAperiodicTask(aperiodicTasks.get(i).getName(), aperiodicTasks.get(i).getStart());
 		}
-	
-		pollingScheduler.run((int) timeUnitsToRunSpinner.getValue());
-		deferrableScheduler.run((int) timeUnitsToRunSpinner.getValue());
-		sporadicScheduler.run((int) timeUnitsToRunSpinner.getValue());
+
+		pollingScheduler.run((Integer) timeUnitsToRunSpinner.getValue());
+		deferrableScheduler.run((Integer) timeUnitsToRunSpinner.getValue());
+		sporadicScheduler.run((Integer) timeUnitsToRunSpinner.getValue());
 		List<? extends Task> pollingSchedule = pollingScheduler.getSchedule();
 		List<? extends Task> deferrableSchedule = deferrableScheduler.getSchedule();
 		List<? extends Task> sporadicSchedule = sporadicScheduler.getSchedule();

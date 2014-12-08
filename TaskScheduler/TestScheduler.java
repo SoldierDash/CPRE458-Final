@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/*
 public class TestScheduler extends Scheduler {
 
 	private class TaskItem implements Task {
@@ -78,3 +79,4 @@ public class TestScheduler extends Scheduler {
 	}
 
 }
+*/

@@ -81,8 +81,8 @@ public class AperiodicTaskDialogue extends JDialog implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == aperiodicAddTaskButton) {
-			this.startTime = (int) aperiodicStartTimeSpinner.getValue();
-			this.computationTime = (int) aperiodicComputationTimeSpinner.getValue();
+			this.startTime = (Integer) aperiodicStartTimeSpinner.getValue();
+			this.computationTime = (Integer) aperiodicComputationTimeSpinner.getValue();
 			this.setVisible(false);
 		}
 	}

@@ -4,22 +4,8 @@ import java.util.List;
 
 public abstract class Scheduler {
 
-	private int aperiodicServerComputation;
-	private int aperiodicServerPeriod;
-	
-	Scheduler(int aperiodicServerComputation, int aperiodicServerPeriod) {
-		this.aperiodicServerComputation = aperiodicServerComputation;
-		this.aperiodicServerPeriod = aperiodicServerPeriod;
-	}
-	
-	protected int getAperiodicServerComputation() {
-		return this.aperiodicServerComputation;
-	}
-	
-	protected int getAperiodicServerPeriod() {
-		return this.aperiodicServerPeriod;
-	}
-	
+
+
 	/*
 	 * Add a periodic task to the simulation.
 	 */
@@ -28,7 +14,7 @@ public abstract class Scheduler {
 	/*
 	 * Add an aperiodic task to the simulation.
 	 */
-	public abstract void addAperiodicTask(String name, int start, int computation);
+	public abstract void addAperiodicTask(String name, int computation);
 	
 	/*
 	 * Run the simulation with the tasks passed into the addPeriodicTask() and addAperiodicTask() methods.
