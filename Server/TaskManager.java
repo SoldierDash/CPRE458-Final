@@ -57,8 +57,13 @@ public class TaskManager extends Scheduler {
     }
 
     @Override
+<<<<<<< HEAD
     public void addAperiodicTask(String name, int start_time, int computation) {
         aperiodic_server.add(name, start_time, computation);
+=======
+    public void addAperiodicTask(String name, int start, int computation) {
+        aperiodic_server.add(time, name, computation);
+>>>>>>> origin/master
     }
 
     public void increment() {
