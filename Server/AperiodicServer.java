@@ -17,9 +17,11 @@ public class AperiodicServer extends Server {
         tasks = new PriorityQueue<Task>(new Task.FIFO());
     }
 
-    public void add(long time, String name, int computation) { // String name, int start, int computation
-        tasks.add(new Task(this, task_counter++, time, Long.MAX_VALUE, computation));
+    public void add(String name, int start_time, int computation) { // String name, int start, int computation
+        tasks.add(new Task(this, task_counter++, start_time, Long.MAX_VALUE, computation));
     }
+
+    public void add(Task task) {tasks.add(task);}
 
     @Override
     protected Task generateTask(long time) {

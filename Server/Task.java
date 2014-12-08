@@ -8,10 +8,11 @@ import java.util.Comparator;
 public class Task implements TaskScheduler.Task {
 
     public enum Status {
-        RUNNING,
-        COMPLETED,
-        MISSED,
-        IGNORE
+        RUNNING,    // Task ran, not finished
+        COMPLETED,  // Task ran, finished
+        IGNORE,     // Task didn't run, not finished
+        MISSED,     // Task didn't run, finished
+        TERMINATED  // Task didn't run, finished
     }
 
     final int id;
@@ -33,9 +34,12 @@ public class Task implements TaskScheduler.Task {
     public Status increment(long real_time) {
         if(real_time >= real_deadline)
             return Status.MISSED;
-
-        if(!run(real_time))
+        if(start_time > real_time)
             return Status.IGNORE;
+
+        Status run_status = run(real_time);
+        if(run_status == Status.TERMINATED || run_status == Status.IGNORE)
+            return run_status;
 
         remaining_runtime--;
 
@@ -45,8 +49,8 @@ public class Task implements TaskScheduler.Task {
             return Status.RUNNING;
     }
 
-    protected boolean run (long time) {
-        return true;
+    protected Status run (long time) {
+        return Status.RUNNING;
     }
 
     public long getDeadline() {

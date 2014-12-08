@@ -43,7 +43,7 @@ public class TaskManager extends Scheduler {
                 tasks = new PriorityQueue<Task>(new Task.EDF());
         }
 
-        aperiodic_server = new AperiodicServer(aperiodicName, aperiodicComp, aperiodicPeriod, aperiodicComp, aper_type);
+        aperiodic_server = new AperiodicServer(aperiodicName, aperiodicPeriod, aperiodicComp, aperiodicPeriod, aper_type);
         addServer(aperiodic_server);
     }
 
@@ -57,8 +57,8 @@ public class TaskManager extends Scheduler {
     }
 
     @Override
-    public void addAperiodicTask(String name, int computation) {
-        aperiodic_server.add(time, name, computation);
+    public void addAperiodicTask(String name, int start_time, int computation) {
+        aperiodic_server.add(name, start_time, computation);
     }
 
     public void increment() {
@@ -73,6 +73,7 @@ public class TaskManager extends Scheduler {
         // Attempt to run next task until a task runs/finishs
         Task.Status status;
         Task task;
+        LinkedList<Task> readd = new LinkedList<Task>();
         do {
             task = tasks.poll();
 
@@ -83,15 +84,19 @@ public class TaskManager extends Scheduler {
 
             switch(status) {
                 case RUNNING:
-                    tasks.add(task);
+                    readd.add(task);
                 case COMPLETED:
                     task_history.add(task);
+                    break;
+                case IGNORE:
+                    readd.add(task);
                     break;
                 case MISSED:
                     missed_tasks.add(task);
             }
 
-        } while (status != Task.Status.RUNNING && status != Task.Status.COMPLETED);
+        } while (status == Task.Status.MISSED || status == Task.Status.IGNORE || status == Task.Status.TERMINATED);
+        tasks.addAll(readd);
         time++;
     }
 
