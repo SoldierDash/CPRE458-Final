@@ -481,12 +481,12 @@ public class Simulator extends JFrame implements ActionListener {
 		Graphics2D g = (Graphics2D) imagePanel.getGraphics();
 		
 		int x = 5;
-		int boxSize = 50;
+		int boxSize = 60;
 		taskColors.put(null, Color.WHITE);
 		g.setColor(Color.BLACK);
 		g.drawString("Polling Server Schedule:", x, 45);
 		g.drawString("Deferrable Server Schedule:", x, 145);
-		g.drawString("Sporadic Server Schedule:", x, 245);
+		//g.drawString("Sporadic Server Schedule:", x, 245);
 		x = 200;
 		for (int i = 0; i < pollingSchedule.size(); i++) {
 			/* Resize image if necessary */
@@ -506,6 +506,11 @@ public class Simulator extends JFrame implements ActionListener {
 			/* Draw polling schedule */
 			if (pollingSchedule.get(i) == null) {
 				color = Color.WHITE;
+				g.setColor(color);
+				g.fillRect(x, 15, boxSize, boxSize);
+				g.setColor(Color.BLACK);
+				g.drawRect(x, 15, boxSize, boxSize);
+				g.drawString("No Task", x + 5, 45);
 			} else {
 				color = taskColors.get(pollingSchedule.get(i).getName());
 				if (color == null) {
@@ -515,21 +520,21 @@ public class Simulator extends JFrame implements ActionListener {
 						nextColorIndex = 0;
 					}
 				}
-			}
-			
-			g.setColor(color);
-			g.fillRect(x, 15, boxSize, boxSize);
-			g.setColor(Color.BLACK);
-			g.drawRect(x, 15, boxSize, boxSize);
-			if (pollingSchedule.get(i).getName() != null) {
+				g.setColor(color);
+				g.fillRect(x, 15, boxSize, boxSize);
+				g.setColor(Color.BLACK);
+				g.drawRect(x, 15, boxSize, boxSize);
 				g.drawString(pollingSchedule.get(i).getName(), x + 5, 45);
-			} else {
-				g.drawString("Empty", x + 5, 45);
 			}
 			
 			/* Draw deferrable schedule */
 			if (deferrableSchedule.get(i) == null) {
 				color = Color.WHITE;
+				g.setColor(color);
+				g.fillRect(x, 115, boxSize, boxSize);
+				g.setColor(Color.BLACK);
+				g.drawRect(x, 115, boxSize, boxSize);
+				g.drawString("No Task", x + 5, 145);
 			} else {
 				color = taskColors.get(deferrableSchedule.get(i).getName());
 				if (color == null) {
@@ -539,21 +544,22 @@ public class Simulator extends JFrame implements ActionListener {
 						nextColorIndex = 0;
 					}
 				}
-			}
-			g.setColor(color);
-			g.fillRect(x, 115, boxSize, boxSize);
-			g.setColor(Color.BLACK);
-			g.drawRect(x, 115, boxSize, boxSize);
-			if (deferrableSchedule.get(i).getName() != null) {
+				g.setColor(color);
+				g.fillRect(x, 115, boxSize, boxSize);
+				g.setColor(Color.BLACK);
+				g.drawRect(x, 115, boxSize, boxSize);
 				g.drawString(deferrableSchedule.get(i).getName(), x + 5, 145);
-			} else {
-				g.drawString("None", x + 5, 145);
 			}
 			 
 			/* Draw sporadic schedule */
 			/*
 			if (sporadicSchedule.get(i) == null) {
 				color = Color.WHITE;
+				g.setColor(color);
+				g.fillRect(x, 215, boxSize, boxSize);
+				g.setColor(Color.BLACK);
+				g.drawRect(x, 215, boxSize, boxSize);
+				g.drawString("No Task", x + 5, 245);
 			} else {
 				color = taskColors.get(sporadicSchedule.get(i).getName());
 				if (color == null) {
@@ -563,15 +569,11 @@ public class Simulator extends JFrame implements ActionListener {
 						nextColorIndex = 0;
 					}
 				}
-			}
-			g.setColor(color);
-			g.fillRect(x, 215, boxSize, boxSize);
-			g.setColor(Color.BLACK);
-			g.drawRect(x, 215, boxSize, boxSize);
-			if (sporadicSchedule.get(i).getName() != null) {
+				g.setColor(color);
+				g.fillRect(x, 215, boxSize, boxSize);
+				g.setColor(Color.BLACK);
+				g.drawRect(x, 215, boxSize, boxSize);
 				g.drawString(sporadicSchedule.get(i).getName(), x + 5, 245);
-			} else {
-				g.drawString("None", x + 5, 245);
 			}
 			*/
 			x += boxSize;
