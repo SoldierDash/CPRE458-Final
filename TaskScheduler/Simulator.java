@@ -36,9 +36,9 @@ public class Simulator extends JFrame implements ActionListener {
 		private int computation;
 		private int period;
 		
-		public PeriodicTask(int id, int computation, int period) {
+		public PeriodicTask(int id, int computationTime, int period) {
 			this.id = id;
-			this.computation = computation;
+			this.computation = computationTime;
 			this.period = period;
 		}
 		
