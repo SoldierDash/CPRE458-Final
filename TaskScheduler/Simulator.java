@@ -456,9 +456,9 @@ public class Simulator extends JFrame implements ActionListener {
 		Scheduler deferrableScheduler = new TaskManager(TaskManager.SchedulerType.EDF, TaskManager.AperiodicType.DEFFERABLE, "AT", (Integer) serverComputationTimeSpinner.getValue(), (Integer) serverPeriodSpinner.getValue());
 		Scheduler sporadicScheduler = new TaskManager(TaskManager.SchedulerType.EDF, TaskManager.AperiodicType.SPORADIC, "AT", (Integer) serverComputationTimeSpinner.getValue(), (Integer) serverPeriodSpinner.getValue());
 		for (int i = 0; i < periodicTasks.getSize(); i++) {
-			pollingScheduler.addPeriodicTask(periodicTasks.get(i).getName(), periodicTasks.get(i).getComputation(), periodicTasks.get(i).getPeriod());
-			deferrableScheduler.addPeriodicTask(periodicTasks.get(i).getName(), periodicTasks.get(i).getComputation(), periodicTasks.get(i).getPeriod());
-			sporadicScheduler.addPeriodicTask(periodicTasks.get(i).getName(), periodicTasks.get(i).getComputation(), periodicTasks.get(i).getPeriod());
+			pollingScheduler.addPeriodicTask(periodicTasks.get(i).getName(), periodicTasks.get(i).getPeriod(), periodicTasks.get(i).getComputation());
+			deferrableScheduler.addPeriodicTask(periodicTasks.get(i).getName(), periodicTasks.get(i).getPeriod(), periodicTasks.get(i).getComputation());
+			sporadicScheduler.addPeriodicTask(periodicTasks.get(i).getName(), periodicTasks.get(i).getPeriod(), periodicTasks.get(i).getComputation());
 		}
 		
 		for (int i = 0; i < aperiodicTasks.getSize(); i++) {
@@ -504,14 +504,19 @@ public class Simulator extends JFrame implements ActionListener {
 			g = (Graphics2D) imagePanel.getGraphics();
 			
 			/* Draw polling schedule */
-			color = taskColors.get(pollingSchedule.get(i).getName());
-			if (color == null) {
-				color = COLORS[nextColorIndex++];
-				taskColors.put(pollingSchedule.get(i).getName(), color);
-				if (nextColorIndex == 20) {
-					nextColorIndex = 0;
+			if (pollingSchedule.get(i) == null) {
+				color = Color.WHITE;
+			} else {
+				color = taskColors.get(pollingSchedule.get(i).getName());
+				if (color == null) {
+					color = COLORS[nextColorIndex++];
+					taskColors.put(pollingSchedule.get(i).getName(), color);
+					if (nextColorIndex == 20) {
+						nextColorIndex = 0;
+					}
 				}
 			}
+			
 			g.setColor(color);
 			g.fillRect(x, 15, boxSize, boxSize);
 			g.setColor(Color.BLACK);
@@ -523,12 +528,16 @@ public class Simulator extends JFrame implements ActionListener {
 			}
 			
 			/* Draw deferrable schedule */
-			color = taskColors.get(deferrableSchedule.get(i).getName());
-			if (color == null) {
-				color = COLORS[nextColorIndex++];
-				taskColors.put(deferrableSchedule.get(i).getName(), color);
-				if (nextColorIndex == 20) {
-					nextColorIndex = 0;
+			if (deferrableSchedule.get(i) == null) {
+				color = Color.WHITE;
+			} else {
+				color = taskColors.get(deferrableSchedule.get(i).getName());
+				if (color == null) {
+					color = COLORS[nextColorIndex++];
+					taskColors.put(deferrableSchedule.get(i).getName(), color);
+					if (nextColorIndex == 20) {
+						nextColorIndex = 0;
+					}
 				}
 			}
 			g.setColor(color);
@@ -542,12 +551,17 @@ public class Simulator extends JFrame implements ActionListener {
 			}
 			 
 			/* Draw sporadic schedule */
-			color = taskColors.get(sporadicSchedule.get(i).getName());
-			if (color == null) {
-				color = COLORS[nextColorIndex++];
-				taskColors.put(sporadicSchedule.get(i).getName(), color);
-				if (nextColorIndex == 20) {
-					nextColorIndex = 0;
+			/*
+			if (sporadicSchedule.get(i) == null) {
+				color = Color.WHITE;
+			} else {
+				color = taskColors.get(sporadicSchedule.get(i).getName());
+				if (color == null) {
+					color = COLORS[nextColorIndex++];
+					taskColors.put(sporadicSchedule.get(i).getName(), color);
+					if (nextColorIndex == 20) {
+						nextColorIndex = 0;
+					}
 				}
 			}
 			g.setColor(color);
@@ -559,7 +573,7 @@ public class Simulator extends JFrame implements ActionListener {
 			} else {
 				g.drawString("None", x + 5, 245);
 			}
-			
+			*/
 			x += boxSize;
 		}
 
