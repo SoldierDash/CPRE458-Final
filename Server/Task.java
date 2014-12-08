@@ -21,7 +21,7 @@ public class Task implements TaskScheduler.Task {
     final long real_deadline;
     long remaining_runtime;
     Server parent;
-
+    String name;
 
     public Task(Server parent, int id, long start_time, long deadline, long runtime) {
         this.parent = parent;
@@ -29,6 +29,7 @@ public class Task implements TaskScheduler.Task {
         this.start_time = start_time;
         this.real_deadline = deadline;
         this.remaining_runtime = runtime;
+        name = parent.getName();
     }
 
     public Status increment(long real_time) {
@@ -65,11 +66,15 @@ public class Task implements TaskScheduler.Task {
 
     @Override
     public String getName() {
-        return parent.getName();
+        return name;
+    }
+    
+    public void setName(String name) {
+    	this.name = name;
     }
     
     public String getNameID() {
-    	return parent.getName() + " " + id;
+    	return name + " " + id;
     }
 
     public static class EDF implements Comparator<Task> {

@@ -525,6 +525,7 @@ public class Simulator extends JFrame implements ActionListener {
 				g.drawRect(x, 15, boxSize, boxSize);
 				g.drawString(pollingSchedule.get(i).getName(), x + 5, 45);
 			}
+			g.drawString(Integer.toString(i), x, 90);
 			
 			/* Draw deferrable schedule */
 			if (deferrableSchedule.get(i) == null) {
@@ -549,7 +550,8 @@ public class Simulator extends JFrame implements ActionListener {
 				g.drawRect(x, 115, boxSize, boxSize);
 				g.drawString(deferrableSchedule.get(i).getName(), x + 5, 145);
 			}
-			 
+			g.drawString(Integer.toString(i), x, 190);
+			
 			/* Draw sporadic schedule */
 			/*
 			if (sporadicSchedule.get(i) == null) {
@@ -574,7 +576,9 @@ public class Simulator extends JFrame implements ActionListener {
 				g.drawRect(x, 215, boxSize, boxSize);
 				g.drawString(sporadicSchedule.get(i).getName(), x + 5, 245);
 			}
+			g.drawString(Integer.toString(i), x, 290);
 			*/
+			
 			x += boxSize;
 		}
 

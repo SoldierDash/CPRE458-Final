@@ -11,14 +11,15 @@ public class AperiodicServer extends Server {
 
     public AperiodicServer(String name, int period, int computation, int deadline, TaskManager.AperiodicType type) {
         super(name, period, computation, deadline);
-
         this.type = type;
 
         tasks = new PriorityQueue<Task>(new Task.FIFO());
     }
 
     public void add(String name, int start_time, int computation) { // String name, int start, int computation
-        tasks.add(new Task(this, task_counter++, start_time, Long.MAX_VALUE, computation));
+        Task t = new Task(this, task_counter++, start_time, Long.MAX_VALUE, computation);
+        t.setName(name);
+    	tasks.add(t);
     }
 
     public void add(Task task) {tasks.add(task);}

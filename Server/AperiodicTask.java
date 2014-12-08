@@ -8,6 +8,8 @@ import java.util.LinkedList;
 public class AperiodicTask extends Task {
     AperiodicServer parent;
     TaskManager.AperiodicType type;
+    String name;
+    
     public AperiodicTask(AperiodicServer parent, int id, long start_time, long deadline, long runtime, TaskManager.AperiodicType type) {
         super(parent, id, start_time, deadline, runtime);
         this.parent = parent;
@@ -28,6 +30,8 @@ public class AperiodicTask extends Task {
                     return Status.TERMINATED;
                 else if (type == TaskManager.AperiodicType.DEFFERABLE)
                     return Status.IGNORE;
+                else
+                	return Status.TERMINATED;
             }
 
             //System.out.println(task.getName() + " " + task.getStart() + " " + task.remaining_runtime);
@@ -41,7 +45,12 @@ public class AperiodicTask extends Task {
         } while (status == Task.Status.MISSED || status == Status.TERMINATED || status == Status.IGNORE);
 
         parent.tasks.addAll(readd);
-
+        name = task.getName();
         return Status.RUNNING;
     }
+    
+   @Override
+   public String getName() {
+	   return name;
+   }
 }
