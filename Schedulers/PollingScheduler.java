@@ -73,7 +73,7 @@ public class PollingScheduler {
 		String nextTask = null;
 		PeriodicTask pt = periodicTasks.peek();
 		if (pt != null) {
-			if (pt.getName().equals("SERVER")) {
+			if (pt.getName().equals("SERVER")) { /* If the periodic server task is to be run, check that an aperiodic task is ready to run. If not, the aperiodi server will not run until its next period arrives. */
 				nextTask = this.aperiodicTasks.getTaskAtTime(time);
 				if (nextTask == null) {
 					this.refreshList.add(this.periodicTasks.remove());
@@ -94,6 +94,10 @@ public class PollingScheduler {
 		return (nextTask != null) ? nextTask : "";
 	}
 	
+	/* 
+	 * Decrement the remaining computation time of the given periodic task, removing it from the periodic tasks lists and adding
+	 * it to the refresh list if necessary.
+	 */
 	private void updateTask(PeriodicTask pt) {
 		if (pt.getTimeRemaining() > 1) {
 			pt.setTimeRemaining(pt.getTimeRemaining() - 1);
@@ -102,6 +106,7 @@ public class PollingScheduler {
 		}
 	}
 	
+	/* Replenish the computation time of every task in the task list whos period has been renewed. */
 	private void refreshTasks() {
 		Iterator<PeriodicTask> iterator = this.refreshList.iterator();
 		while (iterator.hasNext()) {
