@@ -107,6 +107,7 @@ public class DeferrableScheduler {
 	}
 	
 	private void refreshTasks() {
+		/* The Deferrable periodic task server might not have been added to the refresh list, so we manually udpate it. */
 		if (this.time % serverTask.getPeriod() == 0) {
 			serverTask.refresh();
 		}
