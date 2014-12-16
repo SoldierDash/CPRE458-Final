@@ -449,7 +449,7 @@ public class Simulator extends JFrame implements ActionListener {
 	}
 	
 	private void drawSchedule() {
-		BackgroundScheduler bs = new BackgroundScheduler((Integer) serverComputationTimeSpinner.getValue(), (Integer) serverPeriodSpinner.getValue());
+		BackgroundScheduler bs = new BackgroundScheduler();
 		PollingScheduler ps = new PollingScheduler((Integer) serverComputationTimeSpinner.getValue(), (Integer) serverPeriodSpinner.getValue());
 		DeferrableScheduler ds = new DeferrableScheduler((Integer) serverComputationTimeSpinner.getValue(), (Integer) serverPeriodSpinner.getValue());
 		

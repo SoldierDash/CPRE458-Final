@@ -4,9 +4,7 @@ import java.util.Iterator;
 
 public class BackgroundScheduler extends Scheduler {
 
-	public BackgroundScheduler(int serverComputationTime, int serverPeriodTime) {
-		super(serverComputationTime, serverPeriodTime);
-	}
+	public BackgroundScheduler() {}
 
 	@Override
 	public String getNextTask() {

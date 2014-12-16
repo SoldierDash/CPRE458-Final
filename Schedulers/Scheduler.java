@@ -51,7 +51,7 @@ public abstract class Scheduler {
 	protected AperiodicTaskQueue aperiodicTasks;
 	protected int time;
 	
-	public Scheduler(int serverComputationTime, int serverPeriodTime) {
+	public Scheduler() {
 		this.periodicTasks = new PriorityQueue<PeriodicTask>();
 		this.refreshList = new LinkedList<PeriodicTask>();
 		this.aperiodicTasks = new AperiodicTaskQueue();

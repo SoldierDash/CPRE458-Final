@@ -7,7 +7,6 @@ public class PollingScheduler extends Scheduler {
 	private PeriodicTask serverTask;
 	
 	public PollingScheduler(int serverComputationTime, int serverPeriodTime) {
-		super(serverComputationTime, serverPeriodTime);
 		this.serverTask = new PeriodicTask("SERVER", serverComputationTime, serverPeriodTime);
 		this.periodicTasks.add(serverTask);
 	}
