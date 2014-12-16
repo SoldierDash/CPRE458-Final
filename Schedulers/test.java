@@ -3,7 +3,7 @@ package Schedulers;
 public class test {
 
 	public static void main(String args[] ) {
-		/* Test 1 */
+		/* Test 1: http://beru.univ-brest.fr/~singhoff/cheddar/publications/muller14.pdf */
 		/*
 		DeferrableScheduler ps1 = new DeferrableScheduler(2, 5);
 		ps1.addPeriodicTask("PT1", 2, 5);
@@ -18,7 +18,7 @@ public class test {
 		}
 		*/
 		
-		/* Test 2 */
+		/* Test 2: http://www.electro.fisica.unlp.edu.ar/temas/p7/HRT/Chapter5.pdf */
 		DeferrableScheduler ps2 = new DeferrableScheduler(2, 5);
 		ps2.addPeriodicTask("PT1", 1, 4);
 		ps2.addPeriodicTask("PT2", 2, 6);

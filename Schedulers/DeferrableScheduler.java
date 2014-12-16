@@ -49,15 +49,17 @@ public class DeferrableScheduler {
 	
 	private PriorityQueue<PeriodicTask> periodicTasks;
 	private LinkedList<PeriodicTask> refreshList;
+	private PeriodicTask serverTask;
 	private AperiodicTaskQueue aperiodicTasks;
 	private int time;
 	
 	public DeferrableScheduler(int serverComputationTime, int serverPeriodTime) {
 		this.periodicTasks = new PriorityQueue<PeriodicTask>();
 		this.refreshList = new LinkedList<PeriodicTask>();
+		this.serverTask = new PeriodicTask("SERVER", serverComputationTime, serverPeriodTime);
 		this.aperiodicTasks = new AperiodicTaskQueue();
 		this.time = 0;
-		this.periodicTasks.add(new PeriodicTask("SERVER", serverComputationTime, serverPeriodTime));
+		this.periodicTasks.add(serverTask);
 	}
 	
 	public void addPeriodicTask(String name, int computationTime, int period) {
@@ -105,6 +107,9 @@ public class DeferrableScheduler {
 	}
 	
 	private void refreshTasks() {
+		if (this.time % serverTask.getPeriod() == 0) {
+			serverTask.refresh();
+		}
 		Iterator<PeriodicTask> iterator = this.refreshList.iterator();
 		while (iterator.hasNext()) {
 			PeriodicTask pt = iterator.next();
