@@ -1,38 +1,25 @@
 package Schedulers;
 
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.PriorityQueue;
 
-public class PollingScheduler extends Scheduler {
+public class BackgroundScheduler extends Scheduler {
 
-	public PollingScheduler(int serverComputationTime, int serverPeriodTime) {
+	public BackgroundScheduler(int serverComputationTime, int serverPeriodTime) {
 		super(serverComputationTime, serverPeriodTime);
 	}
-	
+
 	@Override
 	public String getNextTask() {
 		refreshTasks();
 		String nextTask = null;
 		PeriodicTask pt = periodicTasks.peek();
 		if (pt != null) {
-			if (pt.getName().equals("SERVER")) { /* If the periodic server task is to be run, check that an aperiodic task is ready to run. If not, the aperiodi server will not run until its next period arrives. */
-				nextTask = this.aperiodicTasks.getTaskAtTime(time);
-				if (nextTask == null) {
-					this.refreshList.add(this.periodicTasks.remove());
-					pt = this.periodicTasks.peek();
-					if (pt != null) {
-						nextTask = pt.getName();
-						updateTask(pt);
-					}
-				} else {
-					updateTask(pt);
-				}
-			} else {
-				nextTask = pt.getName();
-				updateTask(pt);
-			}
+			nextTask = pt.getName();
+			updateTask(pt);
+		} else {
+			nextTask = aperiodicTasks.getTaskAtTime(this.time);
 		}
+	
 		this.time += 1;
 		return (nextTask != null) ? nextTask : "";
 	}
@@ -61,5 +48,5 @@ public class PollingScheduler extends Scheduler {
 			}
 		}
 	}
-	
+
 }

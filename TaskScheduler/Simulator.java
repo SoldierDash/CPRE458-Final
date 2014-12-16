@@ -508,6 +508,8 @@ public class Simulator extends JFrame implements ActionListener {
 			}
 		
 			g = (Graphics2D) imagePanel.getGraphics();
+			
+			/* Draw polling schedule */
 			color = taskColors.get(pollingSchedule.get(i));
 			if (color == null) {
 				color = COLORS[nextColorIndex++];
