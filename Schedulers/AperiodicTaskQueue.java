@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 
-public class AperiodicTaskServer {
+public class AperiodicTaskQueue {
 
 	private class Task implements Comparable<Task> {
 		
@@ -60,7 +60,7 @@ public class AperiodicTaskServer {
 	private ArrayList<Task> taskList;
 	private LinkedList<ListItem> schedule;
 	
-	public AperiodicTaskServer() {
+	public AperiodicTaskQueue() {
 		this.taskList = new ArrayList<Task>();
 		this.schedule = new LinkedList<ListItem>();
 	}

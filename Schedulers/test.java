@@ -3,7 +3,7 @@ package Schedulers;
 public class test {
 
 	public static void main(String args[] ) {
-		AperiodicTaskServer atq = new AperiodicTaskServer();
+		AperiodicTaskQueue atq = new AperiodicTaskQueue();
 		atq.addTask("AT 1", 5, 3);
 		atq.addTask("AT 2", 5, 4);
 		atq.addTask("AT 3", 10, 1);
