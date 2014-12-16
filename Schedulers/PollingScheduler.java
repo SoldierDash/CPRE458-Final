@@ -47,29 +47,25 @@ public class PollingScheduler {
 		
 	}
 	
-	private int serverComputationTime;
-	private int serverPeriodTime;
 	private PriorityQueue<PeriodicTask> periodicTasks;
 	private LinkedList<PeriodicTask> refreshList;
 	private AperiodicTaskQueue aperiodicTasks;
 	private int time;
 	
 	public PollingScheduler(int serverComputationTime, int serverPeriodTime) {
-		this.serverComputationTime = serverComputationTime;
-		this.serverPeriodTime = serverPeriodTime;
 		this.periodicTasks = new PriorityQueue<PeriodicTask>();
 		this.refreshList = new LinkedList<PeriodicTask>();
 		this.aperiodicTasks = new AperiodicTaskQueue();
 		this.time = 0;
-		periodicTasks.add(new PeriodicTask("SERVER", serverComputationTime, serverPeriodTime));
+		this.periodicTasks.add(new PeriodicTask("SERVER", serverComputationTime, serverPeriodTime));
 	}
 	
 	public void addPeriodicTask(String name, int computationTime, int period) {
-		periodicTasks.add(new PeriodicTask(name, computationTime, period));
+		this.periodicTasks.add(new PeriodicTask(name, computationTime, period));
 	}
 	
 	public void addAperiodicTask(String name, int startTime, int computationTime) {
-		aperiodicTasks.addTask(name, startTime, computationTime);
+		this.aperiodicTasks.addTask(name, startTime, computationTime);
 	}
 	
 	public String getNextTask() {
@@ -78,10 +74,10 @@ public class PollingScheduler {
 		PeriodicTask pt = periodicTasks.peek();
 		if (pt != null) {
 			if (pt.getName().equals("SERVER")) {
-				nextTask = aperiodicTasks.getTaskAtTime(time);
+				nextTask = this.aperiodicTasks.getTaskAtTime(time);
 				if (nextTask == null) {
-					refreshList.add(periodicTasks.remove());
-					pt = periodicTasks.peek();
+					this.refreshList.add(this.periodicTasks.remove());
+					pt = this.periodicTasks.peek();
 					if (pt != null) {
 						nextTask = pt.getName();
 						updateTask(pt);
@@ -94,7 +90,7 @@ public class PollingScheduler {
 				updateTask(pt);
 			}
 		}
-		time += 1;
+		this.time += 1;
 		return (nextTask != null) ? nextTask : "";
 	}
 	
@@ -102,18 +98,18 @@ public class PollingScheduler {
 		if (pt.getTimeRemaining() > 1) {
 			pt.setTimeRemaining(pt.getTimeRemaining() - 1);
 		} else {
-			refreshList.add(periodicTasks.remove());
+			this.refreshList.add(periodicTasks.remove());
 		}
 	}
 	
 	private void refreshTasks() {
-		Iterator<PeriodicTask> iterator = refreshList.iterator();
+		Iterator<PeriodicTask> iterator = this.refreshList.iterator();
 		while (iterator.hasNext()) {
 			PeriodicTask pt = iterator.next();
-			if (time % pt.getPeriod() == 0) {
+			if (this.time % pt.getPeriod() == 0) {
 				pt.refresh();
 				iterator.remove();
-				periodicTasks.add(pt);
+				this.periodicTasks.add(pt);
 			}
 		}
 	}
