@@ -1,7 +1,5 @@
 package TaskScheduler;
 
-import Server.TaskManager;
-
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.ScrollPane;
@@ -9,8 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.DefaultListModel;
@@ -26,6 +24,9 @@ import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+
+import Schedulers.DeferrableScheduler;
+import Schedulers.PollingScheduler;
 
 public class Simulator extends JFrame implements ActionListener {
 	
@@ -451,27 +452,33 @@ public class Simulator extends JFrame implements ActionListener {
 	 * Currently the code given is just a sample - it does not actually work yet.
 	 */
 	private void drawSchedule() {
-		Scheduler pollingScheduler = new TaskManager(TaskManager.SchedulerType.RMS, TaskManager.AperiodicType.POLLING, "AT", (Integer) serverComputationTimeSpinner.getValue(), (Integer) serverPeriodSpinner.getValue());
-		Scheduler deferrableScheduler = new TaskManager(TaskManager.SchedulerType.RMS, TaskManager.AperiodicType.DEFFERABLE, "AT", (Integer) serverComputationTimeSpinner.getValue(), (Integer) serverPeriodSpinner.getValue());
-		Scheduler sporadicScheduler = new TaskManager(TaskManager.SchedulerType.RMS, TaskManager.AperiodicType.SPORADIC, "AT", (Integer) serverComputationTimeSpinner.getValue(), (Integer) serverPeriodSpinner.getValue());
-		for (int i = 0; i < periodicTasks.getSize(); i++) {
-			pollingScheduler.addPeriodicTask(periodicTasks.get(i).getName(), periodicTasks.get(i).getPeriod(), periodicTasks.get(i).getComputation());
-			deferrableScheduler.addPeriodicTask(periodicTasks.get(i).getName(), periodicTasks.get(i).getPeriod(), periodicTasks.get(i).getComputation());
-			sporadicScheduler.addPeriodicTask(periodicTasks.get(i).getName(), periodicTasks.get(i).getPeriod(), periodicTasks.get(i).getComputation());
+		PollingScheduler ps = new PollingScheduler((Integer) serverComputationTimeSpinner.getValue(), (Integer) serverPeriodSpinner.getValue());
+		DeferrableScheduler ds = new DeferrableScheduler((Integer) serverComputationTimeSpinner.getValue(), (Integer) serverPeriodSpinner.getValue());
+		//SporadicScheduler ss = new SporadicScheduler((Integer) serverComputationTimeSpinner.getValue(), (Integer) serverPeriodSpinner.getValue());
+		
+		for (int i = 0; i < periodicTasks.size(); i++) {
+			PeriodicTask pt = periodicTasks.get(i);
+			ps.addPeriodicTask(pt.getName(), pt.getComputation(), pt.getPeriod());
+			ds.addPeriodicTask(pt.getName(), pt.getComputation(), pt.getPeriod());
+			//ss.addPeriodicTask(pt.getName(), pt.getComputation(), pt.getPeriod());
 		}
 		
-		for (int i = 0; i < aperiodicTasks.getSize(); i++) {
-			pollingScheduler.addAperiodicTask(aperiodicTasks.get(i).getName(), aperiodicTasks.get(i).getStart(), aperiodicTasks.get(i).getComputation());
-			deferrableScheduler.addAperiodicTask(aperiodicTasks.get(i).getName(), aperiodicTasks.get(i).getStart(), aperiodicTasks.get(i).getComputation());
-			sporadicScheduler.addAperiodicTask(aperiodicTasks.get(i).getName(), aperiodicTasks.get(i).getStart(), aperiodicTasks.get(i).getComputation());
+		for (int i = 0; i < aperiodicTasks.size(); i++) {
+			AperiodicTask at = aperiodicTasks.get(i);
+			ps.addAperiodicTask(at.getName(), at.getStart(), at.getComputation());
+			ds.addAperiodicTask(at.getName(), at.getStart(), at.getComputation());
+			//ss.addAperiodicTask(at.getName(), at.getStart(), at.getComputation());
 		}
-
-		pollingScheduler.run((Integer) timeUnitsToRunSpinner.getValue());
-		deferrableScheduler.run((Integer) timeUnitsToRunSpinner.getValue());
-		sporadicScheduler.run((Integer) timeUnitsToRunSpinner.getValue());
-		List<? extends Task> pollingSchedule = pollingScheduler.getSchedule();
-		List<? extends Task> deferrableSchedule = deferrableScheduler.getSchedule();
-		List<? extends Task> sporadicSchedule = sporadicScheduler.getSchedule();
+		
+		ArrayList<String> pollingSchedule = new ArrayList<String>();
+		ArrayList<String> deferrableSchedule = new ArrayList<String>();
+		//ArrayList<String> sporadicSchedule = new ArrayList<String>();
+		
+		for (int i = 0; i < (Integer) timeUnitsToRunSpinner.getValue(); i++) {
+			pollingSchedule.add(ps.getNextTask());
+			deferrableSchedule.add(ds.getNextTask());
+			//sporadicSchedule.add(ss.getNextTask());
+		}
 		
 		imagePanel = new ImagePanel(550, 300);
 		scheduleScrollPane.setViewportView(imagePanel);
@@ -481,7 +488,7 @@ public class Simulator extends JFrame implements ActionListener {
 		
 		int x = 5;
 		int boxSize = 60;
-		taskColors.put(null, Color.WHITE);
+		taskColors.put("", Color.WHITE);
 		g.setColor(Color.BLACK);
 		g.drawString("Polling Server Schedule:", x, 45);
 		g.drawString("Deferrable Server Schedule:", x, 145);
@@ -501,81 +508,52 @@ public class Simulator extends JFrame implements ActionListener {
 			}
 		
 			g = (Graphics2D) imagePanel.getGraphics();
-			
-			/* Draw polling schedule */
-			if (pollingSchedule.get(i) == null) {
-				color = Color.WHITE;
-				g.setColor(color);
-				g.fillRect(x, 15, boxSize, boxSize);
-				g.setColor(Color.BLACK);
-				g.drawRect(x, 15, boxSize, boxSize);
-				g.drawString("No Task", x + 5, 45);
-			} else {
-				color = taskColors.get(pollingSchedule.get(i).getName());
-				if (color == null) {
-					color = COLORS[nextColorIndex++];
-					taskColors.put(pollingSchedule.get(i).getName(), color);
-					if (nextColorIndex == 20) {
-						nextColorIndex = 0;
-					}
+			color = taskColors.get(pollingSchedule.get(i));
+			if (color == null) {
+				color = COLORS[nextColorIndex++];
+				taskColors.put(pollingSchedule.get(i), color);
+				if (nextColorIndex == 20) {
+					nextColorIndex = 0;
 				}
-				g.setColor(color);
-				g.fillRect(x, 15, boxSize, boxSize);
-				g.setColor(Color.BLACK);
-				g.drawRect(x, 15, boxSize, boxSize);
-				g.drawString(pollingSchedule.get(i).getName(), x + 5, 45);
 			}
+			g.setColor(color);
+			g.fillRect(x, 15, boxSize, boxSize);
+			g.setColor(Color.BLACK);
+			g.drawRect(x, 15, boxSize, boxSize);
+			g.drawString(pollingSchedule.get(i), x + 5, 45);
 			g.drawString(Integer.toString(i), x, 90);
 			
 			/* Draw deferrable schedule */
-			if (deferrableSchedule.get(i) == null) {
-				color = Color.WHITE;
-				g.setColor(color);
-				g.fillRect(x, 115, boxSize, boxSize);
-				g.setColor(Color.BLACK);
-				g.drawRect(x, 115, boxSize, boxSize);
-				g.drawString("No Task", x + 5, 145);
-			} else {
-				color = taskColors.get(deferrableSchedule.get(i).getName());
-				if (color == null) {
-					color = COLORS[nextColorIndex++];
-					taskColors.put(deferrableSchedule.get(i).getName(), color);
-					if (nextColorIndex == 20) {
-						nextColorIndex = 0;
-					}
+			color = taskColors.get(deferrableSchedule.get(i));
+			if (color == null) {
+				color = COLORS[nextColorIndex++];
+				taskColors.put(deferrableSchedule.get(i), color);
+				if (nextColorIndex == 20) {
+					nextColorIndex = 0;
 				}
-				g.setColor(color);
-				g.fillRect(x, 115, boxSize, boxSize);
-				g.setColor(Color.BLACK);
-				g.drawRect(x, 115, boxSize, boxSize);
-				g.drawString(deferrableSchedule.get(i).getName(), x + 5, 145);
 			}
+			g.setColor(color);
+			g.fillRect(x, 115, boxSize, boxSize);
+			g.setColor(Color.BLACK);
+			g.drawRect(x, 115, boxSize, boxSize);
+			g.drawString(deferrableSchedule.get(i), x + 5, 145);
 			g.drawString(Integer.toString(i), x, 190);
 			
 			/* Draw sporadic schedule */
 			/*
-			if (sporadicSchedule.get(i) == null) {
-				color = Color.WHITE;
-				g.setColor(color);
-				g.fillRect(x, 215, boxSize, boxSize);
-				g.setColor(Color.BLACK);
-				g.drawRect(x, 215, boxSize, boxSize);
-				g.drawString("No Task", x + 5, 245);
-			} else {
-				color = taskColors.get(sporadicSchedule.get(i).getName());
-				if (color == null) {
-					color = COLORS[nextColorIndex++];
-					taskColors.put(sporadicSchedule.get(i).getName(), color);
-					if (nextColorIndex == 20) {
-						nextColorIndex = 0;
-					}
+			color = taskColors.get(sporadicSchedule.get(i));
+			if (color == null) {
+				color = COLORS[nextColorIndex++];
+				taskColors.put(sporadicSchedule.get(i), color);
+				if (nextColorIndex == 20) {
+					nextColorIndex = 0;
 				}
-				g.setColor(color);
-				g.fillRect(x, 215, boxSize, boxSize);
-				g.setColor(Color.BLACK);
-				g.drawRect(x, 215, boxSize, boxSize);
-				g.drawString(sporadicSchedule.get(i).getName(), x + 5, 245);
 			}
+			g.setColor(color);
+			g.fillRect(x, 215, boxSize, boxSize);
+			g.setColor(Color.BLACK);
+			g.drawRect(x, 215, boxSize, boxSize);
+			g.drawString(sporadicSchedule.get(i), x + 5, 245);
 			g.drawString(Integer.toString(i), x, 290);
 			*/
 			
