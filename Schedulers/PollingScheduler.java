@@ -4,68 +4,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 
-public class PollingScheduler {
+public class PollingScheduler extends Scheduler {
 
-	private class PeriodicTask implements Comparable<PeriodicTask> {
-		
-		private String name;
-		private int computationTime;
-		private int period;
-		private int timeRemaining;
-		
-		public PeriodicTask(String name, int computationTime, int period) {
-			this.name = name;
-			this.computationTime = computationTime;
-			this.period = period;
-			this.timeRemaining = computationTime;
-		}
-		
-		public String getName() {
-			return this.name;
-		}
-		
-		public int getPeriod() {
-			return this.period;
-		}
-		
-		public int getTimeRemaining() {
-			return this.timeRemaining;
-		}
-		
-		public void setTimeRemaining(int timeRemaining) {
-			this.timeRemaining = timeRemaining;
-		}
-		
-		public void refresh() {
-			this.timeRemaining = this.computationTime;
-		}
-
-		@Override
-		public int compareTo(PeriodicTask arg0) {
-			return this.period - arg0.period;
-		}
-		
-	}
-	
-	private PriorityQueue<PeriodicTask> periodicTasks;
-	private LinkedList<PeriodicTask> refreshList;
-	private AperiodicTaskQueue aperiodicTasks;
-	private int time;
-	
 	public PollingScheduler(int serverComputationTime, int serverPeriodTime) {
-		this.periodicTasks = new PriorityQueue<PeriodicTask>();
-		this.refreshList = new LinkedList<PeriodicTask>();
-		this.aperiodicTasks = new AperiodicTaskQueue();
-		this.time = 0;
-		this.periodicTasks.add(new PeriodicTask("SERVER", serverComputationTime, serverPeriodTime));
-	}
-	
-	public void addPeriodicTask(String name, int computationTime, int period) {
-		this.periodicTasks.add(new PeriodicTask(name, computationTime, period));
-	}
-	
-	public void addAperiodicTask(String name, int startTime, int computationTime) {
-		this.aperiodicTasks.addTask(name, startTime, computationTime);
+		super(serverComputationTime, serverPeriodTime);
 	}
 	
 	public String getNextTask() {
