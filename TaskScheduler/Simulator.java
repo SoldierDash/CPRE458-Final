@@ -25,6 +25,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 
+import Schedulers.BackgroundScheduler;
 import Schedulers.DeferrableScheduler;
 import Schedulers.PollingScheduler;
 
@@ -447,37 +448,33 @@ public class Simulator extends JFrame implements ActionListener {
 		resetButton.setEnabled(enabled);
 	}
 	
-	/*
-	 * Draws the schedule.
-	 * Currently the code given is just a sample - it does not actually work yet.
-	 */
 	private void drawSchedule() {
+		BackgroundScheduler bs = new BackgroundScheduler((Integer) serverComputationTimeSpinner.getValue(), (Integer) serverPeriodSpinner.getValue());
 		PollingScheduler ps = new PollingScheduler((Integer) serverComputationTimeSpinner.getValue(), (Integer) serverPeriodSpinner.getValue());
 		DeferrableScheduler ds = new DeferrableScheduler((Integer) serverComputationTimeSpinner.getValue(), (Integer) serverPeriodSpinner.getValue());
-		//SporadicScheduler ss = new SporadicScheduler((Integer) serverComputationTimeSpinner.getValue(), (Integer) serverPeriodSpinner.getValue());
 		
 		for (int i = 0; i < periodicTasks.size(); i++) {
 			PeriodicTask pt = periodicTasks.get(i);
+			bs.addPeriodicTask(pt.getName(), pt.getComputation(), pt.getPeriod());
 			ps.addPeriodicTask(pt.getName(), pt.getComputation(), pt.getPeriod());
 			ds.addPeriodicTask(pt.getName(), pt.getComputation(), pt.getPeriod());
-			//ss.addPeriodicTask(pt.getName(), pt.getComputation(), pt.getPeriod());
 		}
 		
 		for (int i = 0; i < aperiodicTasks.size(); i++) {
 			AperiodicTask at = aperiodicTasks.get(i);
+			bs.addAperiodicTask(at.getName(), at.getStart(), at.getComputation());
 			ps.addAperiodicTask(at.getName(), at.getStart(), at.getComputation());
 			ds.addAperiodicTask(at.getName(), at.getStart(), at.getComputation());
-			//ss.addAperiodicTask(at.getName(), at.getStart(), at.getComputation());
 		}
 		
+		ArrayList<String> backgroundSchedule = new ArrayList<String>();
 		ArrayList<String> pollingSchedule = new ArrayList<String>();
 		ArrayList<String> deferrableSchedule = new ArrayList<String>();
-		//ArrayList<String> sporadicSchedule = new ArrayList<String>();
 		
 		for (int i = 0; i < (Integer) timeUnitsToRunSpinner.getValue(); i++) {
+			backgroundSchedule.add(bs.getNextTask());
 			pollingSchedule.add(ps.getNextTask());
 			deferrableSchedule.add(ds.getNextTask());
-			//sporadicSchedule.add(ss.getNextTask());
 		}
 		
 		imagePanel = new ImagePanel(550, 300);
@@ -490,9 +487,9 @@ public class Simulator extends JFrame implements ActionListener {
 		int boxSize = 60;
 		taskColors.put("", Color.WHITE);
 		g.setColor(Color.BLACK);
-		g.drawString("Polling Server Schedule:", x, 45);
-		g.drawString("Deferrable Server Schedule:", x, 145);
-		//g.drawString("Sporadic Server Schedule:", x, 245);
+		g.drawString("Background Server Schedule:", x, 45);
+		g.drawString("Polling Server Schedule:", x, 145);
+		g.drawString("Deferrable Server Schedule:", x, 245);
 		x = 200;
 		for (int i = 0; i < pollingSchedule.size(); i++) {
 			/* Resize image if necessary */
