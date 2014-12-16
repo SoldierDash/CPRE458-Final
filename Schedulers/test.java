@@ -3,19 +3,16 @@ package Schedulers;
 public class test {
 
 	public static void main(String args[] ) {
-		AperiodicTaskQueue atq = new AperiodicTaskQueue();
-		atq.addTask("AT 1", 5, 3);
-		atq.addTask("AT 2", 5, 4);
-		atq.addTask("AT 3", 10, 1);
-		atq.addTask("AT 4", 3, 3);
+		PollingScheduler ps = new PollingScheduler(2, 5);
+		ps.addPeriodicTask("PT1", 2, 5);
+		ps.addPeriodicTask("PT2", 4, 15);
+		ps.addAperiodicTask("AT1", 3, 1);
+		ps.addAperiodicTask("AT2", 6, 2);
+		ps.addAperiodicTask("AT3", 11, 1);
+		ps.addAperiodicTask("AT4", 11, 1);
 		
-		for (int i = 0; i < 30; i++) {
-			String id = atq.getTaskAtTime(i);
-			if (id == null) {
-				System.out.println("None");
-			} else {
-				System.out.println(id);
-			}
+		for (int i = 0; i < 15; i++) {
+			System.out.println(ps.getNextTask());
 		}
 	}
 	
