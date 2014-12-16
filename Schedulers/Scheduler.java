@@ -48,17 +48,14 @@ public abstract class Scheduler {
 	
 	protected PriorityQueue<PeriodicTask> periodicTasks;
 	protected LinkedList<PeriodicTask> refreshList;
-	protected PeriodicTask serverTask;
 	protected AperiodicTaskQueue aperiodicTasks;
 	protected int time;
 	
 	public Scheduler(int serverComputationTime, int serverPeriodTime) {
 		this.periodicTasks = new PriorityQueue<PeriodicTask>();
 		this.refreshList = new LinkedList<PeriodicTask>();
-		this.serverTask = new PeriodicTask("SERVER", serverComputationTime, serverPeriodTime);
 		this.aperiodicTasks = new AperiodicTaskQueue();
 		this.time = 0;
-		this.periodicTasks.add(serverTask);
 	}
 	
 	public void addPeriodicTask(String name, int computationTime, int period) {

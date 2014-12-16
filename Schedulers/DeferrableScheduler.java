@@ -1,13 +1,15 @@
 package Schedulers;
 
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.PriorityQueue;
 
 public class DeferrableScheduler extends Scheduler {
 
+	private PeriodicTask serverTask;
+	
 	public DeferrableScheduler(int serverComputationTime, int serverPeriodTime) {
 		super(serverComputationTime, serverPeriodTime);
+		this.serverTask = new PeriodicTask("SERVER", serverComputationTime, serverPeriodTime);
+		this.periodicTasks.add(serverTask);
 	}
 	
 	@Override

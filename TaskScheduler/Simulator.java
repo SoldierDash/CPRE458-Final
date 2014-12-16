@@ -506,6 +506,22 @@ public class Simulator extends JFrame implements ActionListener {
 		
 			g = (Graphics2D) imagePanel.getGraphics();
 			
+			/* Draw background schedule */
+			color = taskColors.get(backgroundSchedule.get(i));
+			if (color == null) {
+				color = COLORS[nextColorIndex++];
+				taskColors.put(backgroundSchedule.get(i), color);
+				if (nextColorIndex == 20) {
+					nextColorIndex = 0;
+				}
+			}
+			g.setColor(color);
+			g.fillRect(x, 15, boxSize, boxSize);
+			g.setColor(Color.BLACK);
+			g.drawRect(x, 15, boxSize, boxSize);
+			g.drawString(backgroundSchedule.get(i), x + 5, 45);
+			g.drawString(Integer.toString(i), x, 90);
+			
 			/* Draw polling schedule */
 			color = taskColors.get(pollingSchedule.get(i));
 			if (color == null) {
@@ -516,11 +532,11 @@ public class Simulator extends JFrame implements ActionListener {
 				}
 			}
 			g.setColor(color);
-			g.fillRect(x, 15, boxSize, boxSize);
+			g.fillRect(x, 115, boxSize, boxSize);
 			g.setColor(Color.BLACK);
-			g.drawRect(x, 15, boxSize, boxSize);
-			g.drawString(pollingSchedule.get(i), x + 5, 45);
-			g.drawString(Integer.toString(i), x, 90);
+			g.drawRect(x, 115, boxSize, boxSize);
+			g.drawString(pollingSchedule.get(i), x + 5, 145);
+			g.drawString(Integer.toString(i), x, 190);
 			
 			/* Draw deferrable schedule */
 			color = taskColors.get(deferrableSchedule.get(i));
@@ -532,29 +548,11 @@ public class Simulator extends JFrame implements ActionListener {
 				}
 			}
 			g.setColor(color);
-			g.fillRect(x, 115, boxSize, boxSize);
-			g.setColor(Color.BLACK);
-			g.drawRect(x, 115, boxSize, boxSize);
-			g.drawString(deferrableSchedule.get(i), x + 5, 145);
-			g.drawString(Integer.toString(i), x, 190);
-			
-			/* Draw sporadic schedule */
-			/*
-			color = taskColors.get(sporadicSchedule.get(i));
-			if (color == null) {
-				color = COLORS[nextColorIndex++];
-				taskColors.put(sporadicSchedule.get(i), color);
-				if (nextColorIndex == 20) {
-					nextColorIndex = 0;
-				}
-			}
-			g.setColor(color);
 			g.fillRect(x, 215, boxSize, boxSize);
 			g.setColor(Color.BLACK);
 			g.drawRect(x, 215, boxSize, boxSize);
-			g.drawString(sporadicSchedule.get(i), x + 5, 245);
+			g.drawString(deferrableSchedule.get(i), x + 5, 245);
 			g.drawString(Integer.toString(i), x, 290);
-			*/
 			
 			x += boxSize;
 		}
