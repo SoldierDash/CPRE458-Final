@@ -468,6 +468,10 @@ public class Simulator extends JFrame implements ActionListener {
 			ds.addAperiodicTask(at.getName(), at.getStart(), at.getComputation());
 		}
 		
+		bs.initialize();
+		ps.initialize();
+		ds.initialize();
+		
 		/* Check Schedulability here. */
 		String message = "";
 		boolean schedulable = true;
@@ -495,7 +499,7 @@ public class Simulator extends JFrame implements ActionListener {
 		ArrayList<String> pollingSchedule = new ArrayList<String>();
 		ArrayList<String> deferrableSchedule = new ArrayList<String>();
 		
-		for (int i = 0; bs.isDone() == false && ps.isDone() == false && ds.isDone() == false && i < (Integer) maxSimulationTimeSpinner.getValue(); i++) {
+		for (int i = 0; (bs.isDone() == false || ps.isDone() == false || ds.isDone() == false) && i < (Integer) maxSimulationTimeSpinner.getValue(); i++) {
 			backgroundSchedule.add(bs.getNextTask());
 			pollingSchedule.add(ps.getNextTask());
 			deferrableSchedule.add(ds.getNextTask());

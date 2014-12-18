@@ -63,16 +63,4 @@ public class PollingScheduler extends Scheduler {
 		}
 	}
 	
-	public boolean isScheduleable() {
-		double sum = 0.0;
-		for (PeriodicTask pt : periodicTasks) {
-			sum += (pt.getComputationTime() / pt.getPeriod());
-		}
-		sum += (serverTask.getComputationTime() / serverTask.getPeriod());
-		
-		double exponent = 1 / (periodicTasks.size() + 1);
-		double max = (periodicTasks.size() + 1) * (Math.pow(2, exponent) - 1);
-		return sum <= max;
-	}
-	
 }

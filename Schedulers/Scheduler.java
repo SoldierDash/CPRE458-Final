@@ -53,6 +53,7 @@ public abstract class Scheduler {
 	protected PriorityQueue<PeriodicTask> periodicTasks;
 	protected LinkedList<PeriodicTask> refreshList;
 	protected AperiodicTaskQueue aperiodicTasks;
+	protected boolean initialized;
 	protected int time;
 	protected int lcmOfPeriodicTasks;
 	
@@ -60,28 +61,66 @@ public abstract class Scheduler {
 		this.periodicTasks = new PriorityQueue<PeriodicTask>();
 		this.refreshList = new LinkedList<PeriodicTask>();
 		this.aperiodicTasks = new AperiodicTaskQueue();
+		this.initialized = false;
 		this.time = 0;
 		this.lcmOfPeriodicTasks = 0;
 	}
 	
 	public void addPeriodicTask(String name, int computationTime, int period) {
+		if (this.initialized == true) {
+			throw new IllegalStateException("Tasks cannot be added once the scheduler has been initialized.");
+		}
 		this.periodicTasks.add(new PeriodicTask(name, computationTime, period));
-		lcmOfPeriodicTasks = lcmPeriodicTasks();
 	}
 	
 	public void addAperiodicTask(String name, int startTime, int computationTime) {
+		if (this.initialized == true) {
+			throw new IllegalStateException("Tasks cannot be added once the scheduler has been initialized.");
+		}
 		this.aperiodicTasks.addTask(name, startTime, computationTime);
+	}
+	
+	public void initialize() {
+		this.initialized = true;
+		this.aperiodicTasks.initialize();
+		this.lcmOfPeriodicTasks = lcmPeriodicTasks();
+	}
+	
+	public boolean isInitialized() {
+		return this.initialized;
 	}
 	
 	public abstract String getNextTask();
 	
-	public abstract boolean isScheduleable();
+	public boolean isScheduleable() {
+		if (this.initialized == false) {
+			throw new IllegalStateException("Scheudlers must be initialized before they can be used.");
+		}
+		double sum = 0.0;
+		for (PeriodicTask pt : periodicTasks) {
+			sum += (pt.getComputationTime() / pt.getPeriod());
+		}
+		
+		if (periodicTasks.size() == 0) {
+			return true;
+		}
+		
+		double exponent = 1 / (periodicTasks.size());
+		double max = (periodicTasks.size()) * (Math.pow(2, exponent) - 1);
+		return sum <= max;
+	}
 	
 	/*
 	 * Please note, the code used to calculate the LCM of the periodic tasks is taken from the following webpage:
 	 * http://stackoverflow.com/questions/4201860/how-to-find-gcf-lcm-on-a-set-of-numbers
 	 */
 	public int lcmPeriodicTasks() {
+		if (this.initialized == false) {
+			throw new IllegalStateException("Scheudlers must be initialized before they can be used.");
+		}
+		if (periodicTasks.size() == 0) {
+			return 0;
+		}
 		int lcm = 0;
 		int[] input = new int[periodicTasks.size()];
 		int i = 0;
@@ -111,10 +150,16 @@ public abstract class Scheduler {
 	}
 	
 	public boolean isDone() {
-		return (time > lcmOfPeriodicTasks && aperiodicTasks.isDone());
+		if (this.initialized == false) {
+			throw new IllegalStateException("Scheudlers must be initialized before they can be used.");
+		}
+		return (time >= lcmOfPeriodicTasks && aperiodicTasks.isDone());
 	}
 	
 	public int getSimulationTime() {
+		if (this.initialized == true) {
+			throw new IllegalStateException("Scheudlers must be initialized before they can be used.");
+		}
 		return this.time;
 	}
 }
