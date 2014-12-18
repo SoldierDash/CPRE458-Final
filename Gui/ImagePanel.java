@@ -1,4 +1,4 @@
-package TaskScheduler;
+package Gui;
 
 import java.awt.Color;
 import java.awt.Dimension;

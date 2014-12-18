@@ -1,14 +1,14 @@
-package TaskScheduler;
+package Gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JPanel;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.JButton;
 
 public class AperiodicTaskDialogue extends JDialog implements ActionListener {
 	
