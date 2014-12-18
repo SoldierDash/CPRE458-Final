@@ -11,14 +11,14 @@ public class AperiodicTaskQueue {
 	public class AperiodicTask implements Comparable<AperiodicTask> {
 		
 		private String name;
-		private int startTime;
+		private int arrivalTime;
 		private int computationTime;
 		private int timeStarted;
 		private int timeEnded;
 		
-		public AperiodicTask(String name, int startTime, int computationTime) {
+		public AperiodicTask(String name, int arrivalTime, int computationTime) {
 			this.name = name;
-			this.startTime = startTime;
+			this.arrivalTime = arrivalTime;
 			this.computationTime = computationTime;
 			this.timeStarted = -1;
 			this.timeEnded = -1;
@@ -29,7 +29,7 @@ public class AperiodicTaskQueue {
 		}
 		
 		public int getStartTime() {
-			return startTime;
+			return arrivalTime;
 		}
 		
 		public int getComputationTime() {
@@ -89,11 +89,11 @@ public class AperiodicTaskQueue {
 		this.initialized = false;
 	}
 	
-	public void addTask(String name, int startTime, int computationTime) {
+	public void addTask(String name, int arrivalTime, int computationTime) {
 		if (this.initialized == true) {
 			throw new IllegalStateException("Tasks cannot be added to an aperiodic task queue once it has been initialized.");
 		}
-		tasks.put(name, new AperiodicTask(name, startTime, computationTime));
+		tasks.put(name, new AperiodicTask(name, arrivalTime, computationTime));
 	}
 	
 	public void initialize() {

@@ -76,11 +76,11 @@ public abstract class Scheduler {
 		this.periodicTasks.add(new PeriodicTask(name, computationTime, period));
 	}
 	
-	public void addAperiodicTask(String name, int startTime, int computationTime) {
+	public void addAperiodicTask(String name, int arrivalTime, int computationTime) {
 		if (this.initialized == true) {
 			throw new IllegalStateException("Tasks cannot be added once the scheduler has been initialized.");
 		}
-		this.aperiodicTasks.addTask(name, startTime, computationTime);
+		this.aperiodicTasks.addTask(name, arrivalTime, computationTime);
 	}
 	
 	public void initialize() {
