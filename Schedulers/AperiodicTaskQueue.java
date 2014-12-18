@@ -87,4 +87,8 @@ public class AperiodicTaskQueue {
 		return taskName;
 	}
 	
+	public boolean isDone() {
+		return schedule.isEmpty();
+	}
+	
 }

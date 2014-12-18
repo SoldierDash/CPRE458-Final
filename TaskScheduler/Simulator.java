@@ -17,6 +17,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
@@ -139,7 +140,7 @@ public class Simulator extends JFrame implements ActionListener {
 	private ImagePanel imagePanel;
 	private JSpinner serverComputationTimeSpinner;
 	private JSpinner serverPeriodSpinner;
-	private JSpinner timeUnitsToRunSpinner;
+	private JSpinner maxSimulationTimeSpinner;
 	private JButton addPeriodicTaskButton;
 	private JButton removePeriodicTaskButton;
 	private JButton addAperiodicTaskButton;
@@ -214,15 +215,15 @@ public class Simulator extends JFrame implements ActionListener {
 		controlPanel.add(simulationTimePanel);
 		simulationTimePanel.setLayout(null);
 		
-		JLabel timeUnitsToRunLabel = new JLabel("Time Units To Run:");
-		timeUnitsToRunLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		timeUnitsToRunLabel.setBounds(116, 18, 150, 14);
-		simulationTimePanel.add(timeUnitsToRunLabel);
+		JLabel maxSimulationTime = new JLabel("Max Simulation Time:");
+		maxSimulationTime.setHorizontalAlignment(SwingConstants.CENTER);
+		maxSimulationTime.setBounds(116, 18, 150, 14);
+		simulationTimePanel.add(maxSimulationTime);
 		
-		timeUnitsToRunSpinner = new JSpinner();
-		timeUnitsToRunSpinner.setModel(new SpinnerNumberModel(new Integer(1), new Integer(1), null, new Integer(1)));
-		timeUnitsToRunSpinner.setBounds(382, 15, 50, 20);
-		simulationTimePanel.add(timeUnitsToRunSpinner);
+		maxSimulationTimeSpinner = new JSpinner();
+		maxSimulationTimeSpinner.setModel(new SpinnerNumberModel(new Integer(100), new Integer(1), null, new Integer(1)));
+		maxSimulationTimeSpinner.setBounds(382, 15, 50, 20);
+		simulationTimePanel.add(maxSimulationTimeSpinner);
 		
 		JPanel taskPanel = new JPanel();
 		taskPanel.setBounds(0, 100, 550, 250);
@@ -438,7 +439,7 @@ public class Simulator extends JFrame implements ActionListener {
 	private void setButtonsEnabled(boolean enabled) {
 		serverComputationTimeSpinner.setEnabled(enabled);
 		serverPeriodSpinner.setEnabled(enabled);
-		timeUnitsToRunSpinner.setEnabled(enabled);
+		maxSimulationTimeSpinner.setEnabled(enabled);
 		addPeriodicTaskButton.setEnabled(enabled);
 		removePeriodicTaskButton.setEnabled(enabled);
 		addAperiodicTaskButton.setEnabled(enabled);
@@ -467,11 +468,34 @@ public class Simulator extends JFrame implements ActionListener {
 			ds.addAperiodicTask(at.getName(), at.getStart(), at.getComputation());
 		}
 		
+		/* Check Schedulability here. */
+		String message = "";
+		boolean schedulable = true;
+		if (bs.isScheduleable() == false) {
+			message += "Task set is not schedulable using Background Scheduling Algorithm." + System.lineSeparator();
+			schedulable = false;
+		}
+		if (ps.isScheduleable() == false) {
+			message += "Task set is not schedulable using Polling Server Scheduling Algorithm." + System.lineSeparator();
+			schedulable = false;
+		}
+		if (ps.isScheduleable() == false) {
+			message += "Task set is not schedulable using Deferrable Server Scheduling Algorithm." + System.lineSeparator();
+			schedulable = false;
+		}
+		if (schedulable == false) {
+			JOptionPane.showMessageDialog(this, message, "Schedulability Error", JOptionPane.ERROR_MESSAGE);
+			reset();
+			return;
+		}
+		
+		
+		
 		ArrayList<String> backgroundSchedule = new ArrayList<String>();
 		ArrayList<String> pollingSchedule = new ArrayList<String>();
 		ArrayList<String> deferrableSchedule = new ArrayList<String>();
 		
-		for (int i = 0; i < (Integer) timeUnitsToRunSpinner.getValue(); i++) {
+		for (int i = 0; bs.isDone() == false && ps.isDone() == false && ds.isDone() == false && i < (Integer) maxSimulationTimeSpinner.getValue(); i++) {
 			backgroundSchedule.add(bs.getNextTask());
 			pollingSchedule.add(ps.getNextTask());
 			deferrableSchedule.add(ds.getNextTask());

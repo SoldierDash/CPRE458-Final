@@ -47,4 +47,19 @@ public class BackgroundScheduler extends Scheduler {
 		}
 	}
 
+	public boolean isScheduleable() {
+		double sum = 0.0;
+		for (PeriodicTask pt : periodicTasks) {
+			sum += (pt.getComputationTime() / pt.getPeriod());
+		}
+		
+		if (periodicTasks.size() == 0) {
+			return true;
+		}
+		
+		double exponent = 1 / (periodicTasks.size());
+		double max = (periodicTasks.size()) * (Math.pow(2, exponent) - 1);
+		return sum <= max;
+	}
+
 }
