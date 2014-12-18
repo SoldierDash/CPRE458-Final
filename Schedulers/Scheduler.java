@@ -1,5 +1,6 @@
 package Schedulers;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 
@@ -56,6 +57,7 @@ public abstract class Scheduler {
 	protected boolean initialized;
 	protected int time;
 	protected int lcmOfPeriodicTasks;
+	protected boolean scheduleable;
 	
 	public Scheduler() {
 		this.periodicTasks = new PriorityQueue<PeriodicTask>();
@@ -64,6 +66,7 @@ public abstract class Scheduler {
 		this.initialized = false;
 		this.time = 0;
 		this.lcmOfPeriodicTasks = 0;
+		this.scheduleable = false;
 	}
 	
 	public void addPeriodicTask(String name, int computationTime, int period) {
@@ -84,6 +87,7 @@ public abstract class Scheduler {
 		this.initialized = true;
 		this.aperiodicTasks.initialize();
 		this.lcmOfPeriodicTasks = lcmPeriodicTasks();
+		this.scheduleable = isScheduleable();
 	}
 	
 	public boolean isInitialized() {
@@ -157,9 +161,13 @@ public abstract class Scheduler {
 	}
 	
 	public int getSimulationTime() {
-		if (this.initialized == true) {
+		if (this.initialized == false) {
 			throw new IllegalStateException("Scheudlers must be initialized before they can be used.");
 		}
 		return this.time;
+	}
+	
+	public ArrayList<AperiodicTaskQueue.AperiodicTask> getAperiodicTasks() {
+		return aperiodicTasks.getTasks();
 	}
 }
