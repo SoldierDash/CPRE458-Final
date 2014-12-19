@@ -2,6 +2,7 @@ package Statistics;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import Schedulers.*;
 
@@ -18,64 +19,89 @@ public class CombinedSchedulingStatistics {
 
 	public static void main(String[] args) {
 
-		List<Scheduler> schedulers = new LinkedList<Scheduler>();
-		List<List<String>> scheduled_tasks = new LinkedList<List<String>>(); // 3D array, woahhhhh
+		List<List<Scheduler>> all_schedulers = new LinkedList<List<Scheduler>>();
 
-		/*
-		1.) Create BackgroundScheduler, PollingScheduler, and DeferrableScheduler objects.
-		The PollingScheduler and DeferrableScheduler constructors take a server computation
-		time and period arguements.
-		*/
-		schedulers.add(new BackgroundScheduler());
-		schedulers.add(new PollingScheduler(2, 5));
-		schedulers.add(new DeferrableScheduler(2, 5));
+		int as_time=4, as_period=10;
+		System.out.println("Aperiodic Server (c="+as_time+",p="+as_period+")\t\t\t\t i=Number of aperiodic tasks where start=0, c=2");
+		System.out.println("i\tFinish Time\t\t\tResponse Time\t\t\tExecution time\t\t\tLatency");
+		System.out.println("\tBackground\tPolling\tDeferrable\tBackground\tPolling\tDeferrable\tBackground\tPolling\tDeferrable\tBackground\tPolling\tDeferrable");
 
-		/*
-		 * 2.) Add the periodic and aperiodic tasks to each scheduler object
-		 * 3.) Call the scheduler object's initialize() function. Once this is done, no more tasks can be added.
-		 */
+		// Repeat test for all schedulers, incrementing i each time
+		for(int i = 0; i <= 1000; i++) {
+			List<Scheduler> schedulers = new LinkedList<Scheduler>();
+			all_schedulers.add(schedulers);
 
-		for(Scheduler scheduler: schedulers) {
-			scheduler.addPeriodicTask("PT 1", 1, 4);
-			scheduler.addPeriodicTask("PT 2", 3, 8);
-			scheduler.addAperiodicTask("AT 1", 7, 2);
-			scheduler.addAperiodicTask("AT 2", 11, 5);
-			scheduler.initialize();
+			schedulers.add(new BackgroundScheduler());
+			schedulers.add(new PollingScheduler(as_time, as_period));
+			schedulers.add(new DeferrableScheduler(as_time, as_period));
 
-			if(!scheduler.isScheduleable()) {
-				System.out.println(scheduler.getName() + " is not scheduleable.");
-				continue;
+
+			for (Scheduler scheduler : schedulers) {
+				// Insert tasks
+				scheduler.addPeriodicTask("PT 1", 2, 10);
+				for(int j = 0; j < i; j++) {
+					scheduler.addAperiodicTask("AT ", i*10 + (new Random().nextInt(10)), (new Random().nextInt(10)));
+				}
+
+
+				scheduler.initialize();
+
+				if (!scheduler.isScheduleable()) {
+					System.out.println(scheduler.getName() + " is not scheduleable.");
+					//System.exit(0);
+				}
+
+				scheduler.runToCompletion();
+
+				/*
+				System.out.println(scheduler.getName());
+				for (String s : scheduler.getOutput()) {
+					System.out.print(s + ", ");
+				}
+				System.out.println();
+				*/
+
+				int num_of_tasks = scheduler.getAperiodicTasks().size();
+
+				/*
+				for (AperiodicTaskQueue.AperiodicTask at : scheduler.getAperiodicTasks()) {
+
+					System.out.println(at.getName() + ":");
+					System.out.println(("\tStart time: " + at.getArrivalTime()));
+					System.out.println(("\tTime Started: " + at.getTimeStarted()));
+					System.out.println(("\tTime Ended: " + at.getTimeEnded()));
+					System.out.println("\tResponse Time: " + at.getAvgResponseTime());
+					System.out.println("\tExecution Time: " + at.getAvgExecutionTime());
+					System.out.println("\tCompletion Time: " + at.getAvgCompletionTime());
+
+				}
+				System.out.println();
+				*/
+
+				/*
+				System.out.println("Aperiodic Finish Time: " + scheduler.finishAperiodicTime());
+				System.out.println("Average Response Time of " + num_of_tasks + " A_tasks: " + scheduler.avgAperiodicResponse()); //(total_response_time/(double)num_of_tasks));
+				System.out.println("Average Execution Time of " + num_of_tasks + " A_tasks: " + scheduler.avgAperiodicExecution()); //(total_execution_time/(double)num_of_tasks));
+				System.out.println("Average Completion Time of " + num_of_tasks + " A_tasks: " + scheduler.avgAperiodicCompletion()); //(total_completion_time/(double)num_of_tasks));
+				System.out.println();
+				*/
 			}
 
-			scheduler.runToCompletion();
-
-			System.out.println(scheduler.getName());
-			for (String s : scheduler.getOutput()) {
-				System.out.print(s + ", ");
+			System.out.print(i);
+			for(Scheduler s : schedulers) {
+				System.out.printf("\t" + s.finishAperiodicTime());
 			}
-			System.out.println();
-
-			int num_of_tasks = scheduler.getAperiodicTasks().size();
-
-			/*
-			for (AperiodicTaskQueue.AperiodicTask at : scheduler.getAperiodicTasks()) {
-
-				System.out.println(at.getName() + ":");
-				System.out.println(("\tStart time: " + at.getArrivalTime()));
-				System.out.println(("\tTime Started: " + at.getTimeStarted()));
-				System.out.println(("\tTime Ended: " + at.getTimeEnded()));
-				System.out.println("\tResponse Time: " + at.getAvgResponseTime());
-				System.out.println("\tExecution Time: " + at.getAvgExecutionTime());
-				System.out.println("\tCompletion Time: " + at.getAvgCompletionTime());
-
+			for(Scheduler s : schedulers) {
+				System.out.printf("\t%.2f", s.avgAperiodicResponse());
 			}
-			System.out.println();
-			*/
+			for(Scheduler s : schedulers) {
+				System.out.printf("\t%.2f", s.avgAperiodicExecution());
+			}
+			for(Scheduler s : schedulers) {
+				System.out.printf("\t%.2f", s.avgAperiodicResponse() + s.avgAperiodicExecution());
+			}
 
-			System.out.println("Aperiodic Finish Time: " + scheduler.finishAperiodicTime());
-			System.out.println("Average Response Time of " + num_of_tasks + " A_tasks: " + scheduler.avgAperiodicResponse()); //(total_response_time/(double)num_of_tasks));
-			System.out.println("Average Execution Time of " + num_of_tasks + " A_tasks: " + scheduler.avgAperiodicExecution()); //(total_execution_time/(double)num_of_tasks));
-			System.out.println("Average Completion Time of " + num_of_tasks + " A_tasks: " + scheduler.avgAperiodicCompletion()); //(total_completion_time/(double)num_of_tasks));
+
 			System.out.println();
 		}
 

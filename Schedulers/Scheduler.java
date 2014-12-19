@@ -226,14 +226,18 @@ public abstract class Scheduler {
 	}
 
 	public double avgAperiodicResponse() {
-		double total = 0;
+		double total = 0, size = aperiodicTasks.getTasks().size();
+		if(size == 0)
+			return 0;
 		for(AperiodicTaskQueue.AperiodicTask at: aperiodicTasks.getTasks())
 			total += at.getAvgResponseTime();
 		return total/aperiodicTasks.getTasks().size();
 	}
 
 	public double avgAperiodicExecution() {
-		double total = 0;
+		double total = 0, size = aperiodicTasks.getTasks().size();
+		if(size == 0)
+			return 0;
 		for(AperiodicTaskQueue.AperiodicTask at: aperiodicTasks.getTasks())
 			total += at.getAvgExecutionTime();
 		return total/aperiodicTasks.getTasks().size();
