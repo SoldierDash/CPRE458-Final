@@ -42,7 +42,12 @@ public class PollingScheduler extends Scheduler {
 		this.time += 1;
 		return (nextTask != null) ? nextTask : "";
 	}
-	
+
+	@Override
+	public String getName() {
+		return "Polling Scheduler";
+	}
+
 	/* 
 	 * Decrement the remaining computation time of the given periodic task, removing it from the periodic tasks lists and adding
 	 * it to the refresh list if necessary.

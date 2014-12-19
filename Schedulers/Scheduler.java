@@ -170,4 +170,6 @@ public abstract class Scheduler {
 	public ArrayList<AperiodicTaskQueue.AperiodicTask> getAperiodicTasks() {
 		return aperiodicTasks.getTasks();
 	}
+
+	public abstract String getName();
 }
