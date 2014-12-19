@@ -476,6 +476,7 @@ public class Simulator extends JFrame implements ActionListener {
 		/*
 		String message = "";
 		boolean schedulable = true;
+		/*
 		if (bs.isScheduleable() == false) {
 			message += "Task set is not schedulable using Background Scheduling Algorithm." + System.lineSeparator();
 			schedulable = false;
