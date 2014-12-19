@@ -155,7 +155,7 @@ public abstract class Scheduler {
 		
 		double exponent = (1.0 / (periodicTasks.size()));
 		double max = (periodicTasks.size()) * (Math.pow(2, exponent) - 1);
-		System.out.println(sum + " <= " + max);
+		//System.out.println(sum + " <= " + max);
 		return sum <= max;
 	}
 	
