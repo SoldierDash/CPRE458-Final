@@ -2,6 +2,7 @@ package Schedulers;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.PriorityQueue;
 
 public abstract class Scheduler {
@@ -12,7 +13,16 @@ public abstract class Scheduler {
 		private int computationTime;
 		private int period;
 		private int timeRemaining;
-		
+
+		/*
+		private int arrival_time = 0;
+		private int start_time = 0;
+
+		private int total_response_time = 0;
+		private int total_execution_time = 0;
+		private int total_runs = 0;
+		*/
+
 		public PeriodicTask(String name, int computationTime, int period) {
 			this.name = name;
 			this.computationTime = computationTime;
@@ -35,14 +45,35 @@ public abstract class Scheduler {
 		public int getTimeRemaining() {
 			return this.timeRemaining;
 		}
-		
+
 		public void setTimeRemaining(int timeRemaining) {
+			//if(timeRemaining != this.timeRemaining && arrival_time == 0)
+			//	start_time = time;
 			this.timeRemaining = timeRemaining;
 		}
 		
 		public void refresh() {
+			/*arrival_time = time;
+			start_time = 0;
+			total_runs++;*/
 			this.timeRemaining = this.computationTime;
+
 		}
+
+		/*
+
+		public double getAvgResponseTime() {
+
+		}
+
+		public double getAvgExecutionTime() {
+
+		}
+
+		public double getAvgCompletionTime() {
+
+		}
+		*/
 
 		@Override
 		public int compareTo(PeriodicTask arg0) {
@@ -58,6 +89,7 @@ public abstract class Scheduler {
 	protected int time;
 	protected int lcmOfPeriodicTasks;
 	protected boolean scheduleable;
+	protected List<String> completion_list;
 	
 	public Scheduler() {
 		this.periodicTasks = new PriorityQueue<PeriodicTask>();
@@ -93,8 +125,20 @@ public abstract class Scheduler {
 	public boolean isInitialized() {
 		return this.initialized;
 	}
+
+	public void runToCompletion() {
+		if(!initialized)
+			initialize();
+
+		completion_list = new LinkedList<String>();
+		while (!this.isDone()) {
+			completion_list.add(this.getNextTask());
+		}
+	}
 	
 	public abstract String getNextTask();
+
+	public List<String> getOutput() {return completion_list;}
 	
 	public boolean isScheduleable() {
 		if (this.initialized == false) {
@@ -167,8 +211,39 @@ public abstract class Scheduler {
 		return this.time;
 	}
 	
-	public ArrayList<AperiodicTaskQueue.AperiodicTask> getAperiodicTasks() {
+	public List<AperiodicTaskQueue.AperiodicTask> getAperiodicTasks() {
 		return aperiodicTasks.getTasks();
+	}
+
+	public List<PeriodicTask> getPeriodicTasks() { return refreshList; }
+
+	public int finishAperiodicTime() {
+		int time = 0;
+		for(AperiodicTaskQueue.AperiodicTask at: aperiodicTasks.getTasks())
+			if(at.getTimeEnded() > time)
+				time = at.getTimeEnded();
+		return time;
+	}
+
+	public double avgAperiodicResponse() {
+		double total = 0;
+		for(AperiodicTaskQueue.AperiodicTask at: aperiodicTasks.getTasks())
+			total += at.getAvgResponseTime();
+		return total/aperiodicTasks.getTasks().size();
+	}
+
+	public double avgAperiodicExecution() {
+		double total = 0;
+		for(AperiodicTaskQueue.AperiodicTask at: aperiodicTasks.getTasks())
+			total += at.getAvgExecutionTime();
+		return total/aperiodicTasks.getTasks().size();
+	}
+
+	public double avgAperiodicCompletion() {
+		double total = 0;
+		for(AperiodicTaskQueue.AperiodicTask at: aperiodicTasks.getTasks())
+			total += at.getAvgCompletionTime();
+		return total/aperiodicTasks.getTasks().size();
 	}
 
 	public abstract String getName();

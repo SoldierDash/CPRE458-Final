@@ -38,8 +38,8 @@ public class CombinedSchedulingStatistics {
 		for(Scheduler scheduler: schedulers) {
 			scheduler.addPeriodicTask("PT 1", 1, 4);
 			scheduler.addPeriodicTask("PT 2", 3, 8);
-			//scheduler.addAperiodicTask("AT 1", 7, 2);
-			//scheduler.addAperiodicTask("AT 2", 11, 5);
+			scheduler.addAperiodicTask("AT 1", 7, 2);
+			scheduler.addAperiodicTask("AT 2", 11, 5);
 			scheduler.initialize();
 
 			if(!scheduler.isScheduleable()) {
@@ -47,44 +47,35 @@ public class CombinedSchedulingStatistics {
 				continue;
 			}
 
-			List<String> output = new LinkedList<String>();
-			scheduled_tasks.add(output);
-
-			while (!scheduler.isDone()) {
-				output.add(scheduler.getNextTask());
-			}
+			scheduler.runToCompletion();
 
 			System.out.println(scheduler.getName());
-			for (String s : output) {
+			for (String s : scheduler.getOutput()) {
 				System.out.print(s + ", ");
 			}
 			System.out.println();
 
-			int total_response_time=0, total_execution_time=0, total_completion_time=0, num_of_tasks = scheduler.getAperiodicTasks().size();
+			int num_of_tasks = scheduler.getAperiodicTasks().size();
 
+			/*
 			for (AperiodicTaskQueue.AperiodicTask at : scheduler.getAperiodicTasks()) {
-				total_response_time += at.getAvgResponseTime();
-				total_execution_time += at.getAvgExecutionTime();
-				total_completion_time += at.getAvgCompletionTime();
 
-				/*
 				System.out.println(at.getName() + ":");
 				System.out.println(("\tStart time: " + at.getArrivalTime()));
 				System.out.println(("\tTime Started: " + at.getTimeStarted()));
 				System.out.println(("\tTime Ended: " + at.getTimeEnded()));
-				System.out.println("\tResponse Time: " + response_time);
-				System.out.println("\tExecution Time: " + execution_time);
-				System.out.println("\Completion Time: " + completion_time);
-				*/
+				System.out.println("\tResponse Time: " + at.getAvgResponseTime());
+				System.out.println("\tExecution Time: " + at.getAvgExecutionTime());
+				System.out.println("\tCompletion Time: " + at.getAvgCompletionTime());
 
 			}
 			System.out.println();
+			*/
 
-
-			System.out.println("Total Runtime: " + output.size());
-			System.out.println("Average Response Time of " + num_of_tasks + " A_tasks: " + (total_response_time/(double)num_of_tasks));
-			System.out.println("Average Execution Time of " + num_of_tasks + " A_tasks: " + (total_execution_time/(double)num_of_tasks));
-			System.out.println("Average Completion Time of " + num_of_tasks + " A_tasks: " + (total_completion_time/(double)num_of_tasks));
+			System.out.println("Aperiodic Finish Time: " + scheduler.finishAperiodicTime());
+			System.out.println("Average Response Time of " + num_of_tasks + " A_tasks: " + scheduler.avgAperiodicResponse()); //(total_response_time/(double)num_of_tasks));
+			System.out.println("Average Execution Time of " + num_of_tasks + " A_tasks: " + scheduler.avgAperiodicExecution()); //(total_execution_time/(double)num_of_tasks));
+			System.out.println("Average Completion Time of " + num_of_tasks + " A_tasks: " + scheduler.avgAperiodicCompletion()); //(total_completion_time/(double)num_of_tasks));
 			System.out.println();
 		}
 
