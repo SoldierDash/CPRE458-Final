@@ -28,7 +28,7 @@ public class AperiodicTaskQueue {
 			return name;
 		}
 		
-		public int getStartTime() {
+		public int getArrivalTime() {
 			return arrivalTime;
 		}
 		
@@ -51,10 +51,22 @@ public class AperiodicTaskQueue {
 		public void setTimeEnded(int timeEnded) {
 			this.timeEnded = timeEnded;
 		}
+
+		public double getAvgResponseTime() {
+			return getTimeStarted() - getArrivalTime();
+		}
+
+		public double getAvgExecutionTime() {
+			return getTimeEnded() - getTimeStarted();
+		}
+
+		public double getAvgCompletionTime() {
+			return getTimeEnded() - getArrivalTime();
+		}
 		
 		@Override
 		public int compareTo(AperiodicTask o) {
-			return this.getStartTime() - o.getStartTime();
+			return this.getArrivalTime() - o.getArrivalTime();
 		}
 		
 	}
@@ -105,7 +117,7 @@ public class AperiodicTaskQueue {
 		schedule.clear();
 		for (AperiodicTask t : taskList) {
 			for (int i = 0; i < t.getComputationTime(); i++) {
-				schedule.add(new ListItem(t.getName(), t.getStartTime()));
+				schedule.add(new ListItem(t.getName(), t.getArrivalTime()));
 			}
 		}
 		this.initialized = true;

@@ -1,17 +1,25 @@
 package Statistics;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import Schedulers.*;
+
+/* Excerpt from slide
+CprE 458/558: Real-Time Systems (G. Manimaran)4
+Performance Metrics
+•Minimizing Schedule Length.
+•Minimizing Sum of Completion Times.
+•Maximizing Weighted Sum of Values (Useful in RT systems).
+•Minimizing the Maximum Lateness (useful in RT systems).
+ */
 
 public class CombinedSchedulingStatistics {
 
 	public static void main(String[] args) {
 
 		List<Scheduler> schedulers = new LinkedList<Scheduler>();
-		List<List<String>> finished = new LinkedList<List<String>>(); // 3D array, woahhhhh
+		List<List<String>> scheduled_tasks = new LinkedList<List<String>>(); // 3D array, woahhhhh
 
 		/*
 		1.) Create BackgroundScheduler, PollingScheduler, and DeferrableScheduler objects.
@@ -30,12 +38,17 @@ public class CombinedSchedulingStatistics {
 		for(Scheduler scheduler: schedulers) {
 			scheduler.addPeriodicTask("PT 1", 1, 4);
 			scheduler.addPeriodicTask("PT 2", 3, 8);
-			scheduler.addAperiodicTask("AT 1", 7, 2);
-			scheduler.addAperiodicTask("AT 2", 11, 5);
+			//scheduler.addAperiodicTask("AT 1", 7, 2);
+			//scheduler.addAperiodicTask("AT 2", 11, 5);
 			scheduler.initialize();
 
+			if(!scheduler.isScheduleable()) {
+				System.out.println(scheduler.getName() + " is not scheduleable.");
+				continue;
+			}
+
 			List<String> output = new LinkedList<String>();
-			finished.add(output);
+			scheduled_tasks.add(output);
 
 			while (!scheduler.isDone()) {
 				output.add(scheduler.getNextTask());
@@ -47,25 +60,32 @@ public class CombinedSchedulingStatistics {
 			}
 			System.out.println();
 
-			int total_response_time=0, total_execution_time=0, num_of_tasks = scheduler.getAperiodicTasks().size();
+			int total_response_time=0, total_execution_time=0, total_completion_time=0, num_of_tasks = scheduler.getAperiodicTasks().size();
 
 			for (AperiodicTaskQueue.AperiodicTask at : scheduler.getAperiodicTasks()) {
-				int response_time = at.getTimeStarted() - at.getStartTime();
-				total_response_time += response_time;
-				int execution_time = at.getTimeEnded() - at.getTimeStarted();
-				total_execution_time = execution_time;
+				total_response_time += at.getAvgResponseTime();
+				total_execution_time += at.getAvgExecutionTime();
+				total_completion_time += at.getAvgCompletionTime();
 
+				/*
 				System.out.println(at.getName() + ":");
-				System.out.println(("\tStart time: " + at.getStartTime()));
+				System.out.println(("\tStart time: " + at.getArrivalTime()));
 				System.out.println(("\tTime Started: " + at.getTimeStarted()));
 				System.out.println(("\tTime Ended: " + at.getTimeEnded()));
-				System.out.println("Response Time: " + response_time);
-				System.out.println("Execution Time: " + execution_time);
+				System.out.println("\tResponse Time: " + response_time);
+				System.out.println("\tExecution Time: " + execution_time);
+				System.out.println("\Completion Time: " + completion_time);
+				*/
+
 			}
 			System.out.println();
 
-			System.out.println("Average Response Time of " + num_of_tasks + " A_tasks: " + total_response_time/num_of_tasks);
-			System.out.println("Average Execution Time of " + num_of_tasks + " A_tasks: " + total_execution_time/num_of_tasks);
+
+			System.out.println("Total Runtime: " + output.size());
+			System.out.println("Average Response Time of " + num_of_tasks + " A_tasks: " + (total_response_time/(double)num_of_tasks));
+			System.out.println("Average Execution Time of " + num_of_tasks + " A_tasks: " + (total_execution_time/(double)num_of_tasks));
+			System.out.println("Average Completion Time of " + num_of_tasks + " A_tasks: " + (total_completion_time/(double)num_of_tasks));
+			System.out.println();
 		}
 
 /*
@@ -98,10 +118,10 @@ public class CombinedSchedulingStatistics {
 		System.out.println();
 		for (AperiodicTaskQueue.AperiodicTask at : bs.getAperiodicTasks()) {
 			System.out.println(at.getName() + ":");
-			System.out.println(("\tStart time: " + at.getStartTime()));
+			System.out.println(("\tStart time: " + at.getArrivalTime()));
 			System.out.println(("\tTime Started: " + at.getTimeStarted()));
 			System.out.println(("\tTime Ended: " + at.getTimeEnded()));
-			System.out.println("Response Time: " + (at.getTimeStarted() - at.getStartTime()));
+			System.out.println("Response Time: " + (at.getTimeStarted() - at.getArrivalTime()));
 			System.out.println("Execution Time: " + (at.getTimeEnded() - at.getTimeStarted()));
 		}
 		System.out.println();
@@ -114,10 +134,10 @@ public class CombinedSchedulingStatistics {
 		System.out.println();
 		for (AperiodicTaskQueue.AperiodicTask at : ps.getAperiodicTasks()) {
 			System.out.println(at.getName() + ":");
-			System.out.println(("\tStart time: " + at.getStartTime()));
+			System.out.println(("\tStart time: " + at.getArrivalTime()));
 			System.out.println(("\tTime Started: " + at.getTimeStarted()));
 			System.out.println(("\tTime Ended: " + at.getTimeEnded()));
-			System.out.println("Response Time: " + (at.getTimeStarted() - at.getStartTime()));
+			System.out.println("Response Time: " + (at.getTimeStarted() - at.getArrivalTime()));
 			System.out.println("Execution Time: " + (at.getTimeEnded() - at.getTimeStarted()));
 		}
 		System.out.println();
@@ -130,10 +150,10 @@ public class CombinedSchedulingStatistics {
 		System.out.println();
 		for (AperiodicTaskQueue.AperiodicTask at : ds.getAperiodicTasks()) {
 			System.out.println(at.getName() + ":");
-			System.out.println(("\tStart time: " + at.getStartTime()));
+			System.out.println(("\tStart time: " + at.getArrivalTime()));
 			System.out.println(("\tTime Started: " + at.getTimeStarted()));
 			System.out.println(("\tTime Ended: " + at.getTimeEnded()));
-			System.out.println("Response Time: " + (at.getTimeStarted() - at.getStartTime()));
+			System.out.println("Response Time: " + (at.getTimeStarted() - at.getArrivalTime()));
 			System.out.println("Execution Time: " + (at.getTimeEnded() - at.getTimeStarted()));
 		}
 		System.out.println();
