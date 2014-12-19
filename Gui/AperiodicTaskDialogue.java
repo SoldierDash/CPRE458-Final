@@ -27,7 +27,7 @@ public class AperiodicTaskDialogue extends JDialog implements ActionListener {
 		setResizable(false);
 		setSize(300, 200);
 		setModal(true);
-		setTitle("Create Periodic Task");
+		setTitle("Create Aperiodic Task");
 		getContentPane().setLayout(null);
 		
 		JPanel aperiodicStartTimePanel = new JPanel();
