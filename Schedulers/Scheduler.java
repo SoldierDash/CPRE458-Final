@@ -146,15 +146,16 @@ public abstract class Scheduler {
 		}
 		double sum = 0.0;
 		for (PeriodicTask pt : periodicTasks) {
-			sum += (pt.getComputationTime() / pt.getPeriod());
+			sum += ((pt.getComputationTime() * 1.0) / pt.getPeriod());
 		}
 		
 		if (periodicTasks.size() == 0) {
 			return true;
 		}
 		
-		double exponent = 1 / (periodicTasks.size());
+		double exponent = (1.0 / (periodicTasks.size()));
 		double max = (periodicTasks.size()) * (Math.pow(2, exponent) - 1);
+		System.out.println(sum + " <= " + max);
 		return sum <= max;
 	}
 	
