@@ -211,7 +211,7 @@ public class Simulator extends JFrame implements ActionListener {
 		serverSettingsPanel.add(serverPeriodSpinner);
 		
 		JPanel simulationTimePanel = new JPanel();
-		simulationTimePanel.setBounds(0, 50, 550, 50);
+		simulationTimePanel.setBounds(0, 300, 550, 50);
 		controlPanel.add(simulationTimePanel);
 		simulationTimePanel.setLayout(null);
 		
@@ -226,7 +226,7 @@ public class Simulator extends JFrame implements ActionListener {
 		simulationTimePanel.add(maxSimulationTimeSpinner);
 		
 		JPanel taskPanel = new JPanel();
-		taskPanel.setBounds(0, 100, 550, 250);
+		taskPanel.setBounds(0, 50, 550, 250);
 		controlPanel.add(taskPanel);
 		taskPanel.setLayout(null);
 		
