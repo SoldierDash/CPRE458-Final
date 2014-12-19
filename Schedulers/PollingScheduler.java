@@ -15,9 +15,9 @@ public class PollingScheduler extends Scheduler {
 	public String getNextTask() {
 		if (this.initialized == false) {
 			throw new IllegalStateException("Scheudlers must be initialized before they can be used.");
-		} else if (this.scheduleable == false) {
+		} /* else if (this.scheduleable == false) {
 			throw new IllegalStateException("Task set is not scheduleable.");
-		}
+		} */
 		refreshTasks();
 		String nextTask = null;
 		PeriodicTask pt = periodicTasks.peek();

@@ -473,6 +473,7 @@ public class Simulator extends JFrame implements ActionListener {
 		ds.initialize();
 		
 		/* Check Schedulability here. */
+		/*
 		String message = "";
 		boolean schedulable = true;
 		if (bs.isScheduleable() == false) {
@@ -492,7 +493,7 @@ public class Simulator extends JFrame implements ActionListener {
 			reset();
 			return;
 		}
-		
+		*/
 		
 		
 		ArrayList<String> backgroundSchedule = new ArrayList<String>();
