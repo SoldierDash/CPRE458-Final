@@ -38,10 +38,10 @@ public class CombinedSchedulingStatistics {
 
 			for (Scheduler scheduler : schedulers) {
 				// Insert tasks
-				scheduler.addPeriodicTask("PT 1", 1, 10);
-				scheduler.addPeriodicTask("PT 2", 1, 9);
+				scheduler.addPeriodicTask("PT 1", 4, 10);
+				scheduler.addPeriodicTask("PT 2", 4, 9);
 				for(int j = 0; j < i; j++) {
-					scheduler.addAperiodicTask("AT " + i, 0, 2);
+					scheduler.addAperiodicTask("AT " + j, j*10 + (new Random().nextInt(10)), 1);
 				}
 
 
