@@ -21,7 +21,7 @@ public class CombinedSchedulingStatistics {
 
 		List<List<Scheduler>> all_schedulers = new LinkedList<List<Scheduler>>();
 
-		int as_time=4, as_period=10;
+		int as_time=1, as_period=10;
 		System.out.println("Aperiodic Server (c="+as_time+",p="+as_period+")\t\t\t\t i=Number of aperiodic tasks where start=0, c=2");
 		System.out.println("i\tFinish Time\t\t\tResponse Time\t\t\tExecution time\t\t\tLatency");
 		System.out.println("\tBackground\tPolling\tDeferrable\tBackground\tPolling\tDeferrable\tBackground\tPolling\tDeferrable\tBackground\tPolling\tDeferrable");
@@ -38,18 +38,20 @@ public class CombinedSchedulingStatistics {
 
 			for (Scheduler scheduler : schedulers) {
 				// Insert tasks
-				scheduler.addPeriodicTask("PT 1", 2, 10);
+				scheduler.addPeriodicTask("PT 1", 1, 10);
+				scheduler.addPeriodicTask("PT 2", 1, 9);
 				for(int j = 0; j < i; j++) {
-					scheduler.addAperiodicTask("AT ", i*10 + (new Random().nextInt(10)), (new Random().nextInt(10)));
+					scheduler.addAperiodicTask("AT " + i, 0, 2);
 				}
 
 
 				scheduler.initialize();
-
+/*
 				if (!scheduler.isScheduleable()) {
 					System.out.println(scheduler.getName() + " is not scheduleable.");
 					//System.exit(0);
 				}
+				*/
 
 				scheduler.runToCompletion();
 
@@ -60,8 +62,6 @@ public class CombinedSchedulingStatistics {
 				}
 				System.out.println();
 				*/
-
-				int num_of_tasks = scheduler.getAperiodicTasks().size();
 
 				/*
 				for (AperiodicTaskQueue.AperiodicTask at : scheduler.getAperiodicTasks()) {
